@@ -224,24 +224,23 @@ const Header = () => {
 															<div className="offcanvas-body z-3">
 																<ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
 																	<li className="nav-item">
-																		<NavLink className="nav-link" to="/">
+																		<NavLink to="/" className="nav-link">
 																			Home
 																		</NavLink>
 																	</li>
 																	<li className="nav-item">
-																		<NavLink className="nav-link" to="/">
-																			Products
+																		<NavLink to="/shop" className="nav-link">
+																			Shop
 																		</NavLink>
 																	</li>
 																	<li className="nav-item">
-																		<NavLink className="nav-link" to="/">
-																			Coupons
-																		</NavLink>
+																		<NavLink className="nav-link">Products</NavLink>
 																	</li>
 																	<li className="nav-item">
-																		<NavLink className="nav-link" to="/">
-																			About
-																		</NavLink>
+																		<NavLink className="nav-link">Coupons</NavLink>
+																	</li>
+																	<li className="nav-item">
+																		<NavLink className="nav-link">About</NavLink>
 																	</li>
 																</ul>
 															</div>
@@ -291,7 +290,7 @@ const Header = () => {
 														<NavLink to="/">Home</NavLink>
 													</li>
 													<li>
-														<NavLink to="/">Shop</NavLink>
+														<NavLink to="/shop">Shop</NavLink>
 													</li>
 													<li>
 														<NavLink to="/">Products</NavLink>
@@ -357,8 +356,6 @@ const Header = () => {
 					</div>
 				</div>
 			</header>
-
-			
 		</>
 	);
 };

@@ -1,4 +1,4 @@
-import ProductList from "../feature/products/component/ProductList";
+import ProductList from "./component/home/ProductList";
 
 const Shop = () => {
 	return <ProductList />;
