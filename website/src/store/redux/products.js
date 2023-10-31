@@ -23,7 +23,7 @@ export const productSlice = createSlice({
 			})
 			.addCase(fetchAllProductsAsync.fulfilled, (state, action) => {
 				state.status = "idle";
-				state.products = action.payload;
+				state.products = action?.payload || [];
 				// state.totalItems = action.payload.totalItems;
 			});
 	},

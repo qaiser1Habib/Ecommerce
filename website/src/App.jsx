@@ -2,6 +2,7 @@ import Header from "./view/partials/Header";
 import Home from "./view/Home";
 import Shop from "./view/Shop";
 import Footer from "./view/partials/Footer";
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {

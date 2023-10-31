@@ -6,20 +6,21 @@ import Categories from "./component/home/Categories";
 import { fetchAllProductsAsync } from "../actions/productSlice";
 import { selectAllProducts, selectTotalItems } from "../store/redux/products";
 import Pagination from "../styles/pagination/Pagination";
+import { useToast } from "../store/hooks/useToast";
 
 const Home = () => {
 	const [page, setPage] = useState(1);
 	const dispatch = useDispatch();
 	const products = useSelector(selectAllProducts);
 	const totalItems = useSelector(selectTotalItems);
+	const { notify } = useToast();
 
 	const limit = 12;
 	const handlePage = (page) => {
 		setPage(page);
 	};
-	const formData = { _page: page, _limit: limit };
 	useEffect(() => {
-		dispatch(fetchAllProductsAsync(formData));
+		dispatch(fetchAllProductsAsync({ formData: { page: page, limit: limit }, notify }));
 	}, [dispatch, page]);
 
 	return (

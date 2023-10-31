@@ -9,12 +9,11 @@ const instance = axios.create({
 instance.interceptors.response.use(
 	(response) => {
 		// Check code within JSON body for actual status
-		console.log(response.data);
 		if (response.data?.httpCode !== HTTP_STATUS_CODES?.OK && response.data?.httpCode !== HTTP_STATUS_CODES?.CREATED) {
 			// You can add more custom logic based on the code here
 			throw response.data;
 		}
-
+		
 		return response.data;
 	},
 	(error) => {
@@ -22,7 +21,7 @@ instance.interceptors.response.use(
 		if (error.message === "Network Error") {
 			throw new Error("Server is not responding. Please try again later.");
 		}
-
+		
 		// If error response is available, use its message
 		if (error.response) {
 			throw new Error(error.response.data.message);

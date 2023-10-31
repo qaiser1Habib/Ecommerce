@@ -55,19 +55,18 @@ const ProductList = () => {
 	const handleSort = (option) => {
 		const newFormData = { ...filters, sort: option.sort, order: option.order };
 		setFilters(newFormData);
-		dispatch(fetchAllProductsAsync({ formData: { page, limit, ...newFormData } }, notify));
+		dispatch(fetchAllProductsAsync({ formData: { page, limit, ...newFormData }, notify }));
 	};
 	const handleFilter = (e, section) => {
 		const newFormData = { ...filters, [section]: e.target.value };
 		setFilters(newFormData);
-		dispatch(fetchAllProductsAsync({ formData: { page, limit, ...newFormData } }, notify));
+		dispatch(fetchAllProductsAsync({ formData: { page, limit, ...newFormData }, notify }));
 	};
 	const handlePage = (page) => {
 		setPage(page);
 	};
 	useEffect(() => {
-		// setFormData({ _page: page, _limit: limit });
-		dispatch(fetchAllProductsAsync({ formData: { page: page, limit: limit } }, notify));
+		dispatch(fetchAllProductsAsync({ formData: { page: page, limit: limit }, notify }));
 	}, [dispatch, page]);
 
 	return (

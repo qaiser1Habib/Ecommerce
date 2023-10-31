@@ -12,7 +12,7 @@ exports.createProduct = async (req, res) => {
 };
 
 const sendJsonResponse = (res, httpCode, status = false, message = "No Message To Show!", payload = null) => {
-	return res.status(httpCode).json({
+	return res.status(HTTP_STATUS_CODES.OK).json({
 		httpCode,
 		status,
 		message,
@@ -21,7 +21,7 @@ const sendJsonResponse = (res, httpCode, status = false, message = "No Message T
 };
 
 exports.fetchAllProduct = async (req, res) => {
-	const { page, limit, category, brand, sort, order, _page, _limit } = req.query;
+	const { page, limit, category, brand, sort, order } = req.query;
 
 	if (!page || !limit) {
 		return sendJsonResponse(res, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!");
@@ -30,24 +30,22 @@ exports.fetchAllProduct = async (req, res) => {
 	let query = Product.find();
 
 	if (category) {
-		query = query.where('category').equals(category);
+		query = query.where("category").equals(category);
 	}
 
 	if (brand) {
-		query = query.where('brand').equals(brand);
+		query = query.where("brand").equals(brand);
 	}
 
 	if (sort && order) {
 		query = query.sort({ [sort]: order });
 	}
 
-	if (_page && _limit) {
-		const pageSize = parseInt(_limit);
-		const pageNumber = parseInt(_page);
+	if (page && limit) {
+		const pageSize = parseInt(limit);
+		const pageNumber = parseInt(page);
 		query = query.skip(pageSize * (pageNumber - 1)).limit(pageSize);
 	}
-
-	console.log(req.query);
 
 	try {
 		const docs = await query.exec();

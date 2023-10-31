@@ -20,12 +20,14 @@ export const useToast = () => {
 
 	const notify = (type = "default", message, customConfig = {}) => {
 		const toastFunc = toastTypes[type] || toastTypes.default;
+		console.log(message);
 
 		toastFunc(message, {
 			...toastPreferences,
 			...customConfig,
 		});
 	};
+
 
 	return { notify };
 };
