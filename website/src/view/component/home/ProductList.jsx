@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchAllProductsAsync } from "../../../actions/productSlice";
 import { selectAllProducts, selectTotalItems } from "../../../store/redux/products";
 import { useToast } from "../../../store/hooks/useToast";
+import { Link } from "react-router-dom";
 
 const ProductList = () => {
 	const [page, setPage] = useState(1);
@@ -78,7 +79,6 @@ const ProductList = () => {
 					<div className="row">
 						<div className="col-xl-3 col-lg-4">
 							<div className="tp-shop-sidebar mr-10">
-								{/* status */}
 								<div className="tp-shop-widget mb-50">
 									<h3 className="tp-shop-widget-title">Product Status</h3>
 									<div className="tp-shop-widget-content">
@@ -146,7 +146,6 @@ const ProductList = () => {
 									</div>
 								</div>
 
-								{/* product rating */}
 								<div className="tp-shop-widget mb-50">
 									<h3 className="tp-shop-widget-title">Top Rated Products</h3>
 									<div className="tp-shop-widget-content">
@@ -294,18 +293,15 @@ const ProductList = () => {
 														<div className="col-xl-4 col-md-6 col-sm-6 infinite-item" key={index}>
 															<div className="tp-product-item-2 mb-40 border">
 																<div className="tp-product-thumb-2 p-relative z-index-1 fix w-img">
-																	<a href="product-details.html">
+																	<Link to={`/product-detail/${product.id}`}>
 																		<img
 																			src={product.thumbnail}
-																			alt=""
-																			style={{
-																				height: "250px",
-																				objectFit: "cover",
-																				borderBottom: "1px solid var(--tp-border-primary)",
-																			}}
+																			className="w-100"
+																			alt="product-electronic"
+																			style={{ height: "250px", objectFit: "cover" }}
 																		/>
-																	</a>
-																	{/* product action */}
+																	</Link>
+
 																	<div className="tp-product-action-2 tp-product-action-blackStyle">
 																		<div className="tp-product-action-item-2 d-flex flex-column">
 																			<button
@@ -470,7 +466,7 @@ const ProductList = () => {
 																		<a href="#">{product.brand} </a>
 																	</div>
 																	<h3 className="tp-product-title-2">
-																		<a href="product-details.html">{product.title}</a>
+																		<Link to={`/product-detail/${product.id}`}>{product.title}</Link>
 																	</h3>
 																	<div className="tp-product-rating-icon tp-product-rating-icon-2">
 																		<span>

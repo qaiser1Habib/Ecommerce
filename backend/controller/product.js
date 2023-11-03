@@ -11,19 +11,20 @@ exports.createProduct = async (req, res) => {
 	}
 };
 
-const sendJsonResponse = (res, httpCode, status = false, message = "No Message To Show!", payload = null) => {
+const sendJsonResponse = (res, httpCode, status = false, message = "No Message To Show!", payload = null, totalDocs) => {
 	return res.status(HTTP_STATUS_CODES.OK).json({
 		httpCode,
 		status,
 		message,
 		payload,
+		totalDocs,
 	});
 };
 
 exports.fetchAllProduct = async (req, res) => {
-	const { page, limit, category, brand, sort, order } = req.query;
-
-	if (!page || !limit) {
+	const { id, page, limit, category, brand, sort, order } = req.query;
+	console.log(req.query);
+	if (!id && (!page || !limit)) {
 		return sendJsonResponse(res, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!");
 	}
 
@@ -41,6 +42,10 @@ exports.fetchAllProduct = async (req, res) => {
 		query = query.sort({ [sort]: order });
 	}
 
+	if (id) {
+		query = query = Product.findOne({ _id: id });
+	}
+
 	if (page && limit) {
 		const pageSize = parseInt(limit);
 		const pageNumber = parseInt(page);
@@ -49,15 +54,35 @@ exports.fetchAllProduct = async (req, res) => {
 
 	try {
 		const docs = await query.exec();
-		const totalDoc = await Product.countDocuments();
+		const totalDocs = await Product.countDocuments();
 
-		res.set("X-Total-Count", totalDoc);
-		return sendJsonResponse(res, HTTP_STATUS_CODES.OK, true, "Records Found!", docs);
+		return sendJsonResponse(res, HTTP_STATUS_CODES.OK, true, "Records Found!", docs, totalDocs);
 	} catch (error) {
-		console.error("Error:", error); // Log the error for better tracking.
-
+		console.error("Error:", error);
 		return sendJsonResponse(res, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR, false, "Error occurred!", {
 			error: error.message || error,
 		});
 	}
 };
+
+// exports.fetchProductById = async (req, res) => {
+// 	const productId = req.params.id;
+
+// 	if (!productId) {
+// 		return sendJsonResponse(res, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!");
+// 	}
+
+// 	let query = Product.findOne({ _id: productId });
+
+// 	try {
+// 		const docs = await query.exec();
+// 		const totalDocs = await Product.countDocuments();
+
+// 		return sendJsonResponse(res, HTTP_STATUS_CODES.OK, true, "Records Found!", docs, totalDocs);
+// 	} catch (error) {
+// 		console.error("Error:", error);
+// 		return sendJsonResponse(res, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR, false, "Error occurred!", {
+// 			error: error.message || error,
+// 		});
+// 	}
+// };

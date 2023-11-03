@@ -1,19 +1,19 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const Header = () => {
 	return (
 		<>
 			<header>
 				<div className="tp-header-area p-relative z-index-11">
-					{/* header main start */}
+					
 					<div className="tp-header-main tp-header-sticky">
 						<div className="container">
 							<div className="row align-items-center">
 								<div className="col-xl-2 col-lg-2 col-md-4 col-6">
 									<div className="logo">
-										<a href="index.html">
+										<Link to="/">
 											<img src="assets/img/logo/logo.svg" alt="logo" />
-										</a>
+										</Link>
 									</div>
 								</div>
 								<div className="col-xl-6 col-lg-7 d-none d-lg-block">

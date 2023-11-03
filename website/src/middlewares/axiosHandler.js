@@ -3,7 +3,7 @@ import { HTTP_STATUS_CODES } from "../utils/constants";
 
 const instance = axios.create({
 	baseURL: "http://localhost:3000",
-	timeout: 300000, // Timeout after 5 minutes. Adjust as necessary.
+	timeout: 300000,
 });
 
 instance.interceptors.response.use(
@@ -13,7 +13,7 @@ instance.interceptors.response.use(
 			// You can add more custom logic based on the code here
 			throw response.data;
 		}
-		
+
 		return response.data;
 	},
 	(error) => {
@@ -21,7 +21,7 @@ instance.interceptors.response.use(
 		if (error.message === "Network Error") {
 			throw new Error("Server is not responding. Please try again later.");
 		}
-		
+
 		// If error response is available, use its message
 		if (error.response) {
 			throw new Error(error.response.data.message);

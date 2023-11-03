@@ -1,6 +1,6 @@
-const Products = (props) => {
-	// const totalItems = useSelector();
+import { Link } from "react-router-dom";
 
+const Products = (props) => {
 	return (
 		<>
 			<div className="row align-items-end">
@@ -37,19 +37,18 @@ const Products = (props) => {
 										<div key={index} className="col-xl-3 col-lg-3 col-sm-6 d-flex flex-column">
 											<div className="tp-product-item p-relative transition-3 mb-25">
 												<div className="tp-product-thumb p-relative fix m-img">
-													<a href="product-details.html">
+													<Link to={`/product-detail/${product.id}`}>
 														<img
 															src={product.thumbnail}
 															className="w-100"
 															alt="product-electronic"
 															style={{ height: "250px", objectFit: "cover" }}
 														/>
-													</a>
-													{/* product badge */}
+													</Link>
+
 													<div className="tp-product-badge">
 														<span className="product-hot">Hot</span>
 													</div>
-													{/* product action */}
 													<div className="tp-product-action">
 														<div className="tp-product-action-item d-flex flex-column">
 															<button type="button" className="tp-product-action-btn tp-product-add-cart-btn">
@@ -164,7 +163,7 @@ const Products = (props) => {
 														<a href="shop.html">{product.brand}</a>
 													</div>
 													<h3 className="tp-product-title">
-														<a href="product-details.html">{product.title}</a>
+														<Link to={`/product-detail/${product.id}`}>{product.title}</Link>
 													</h3>
 													<div className="tp-product-rating d-flex align-items-center">
 														<div className="tp-product-rating-icon">
@@ -185,7 +184,7 @@ const Products = (props) => {
 															</span>
 														</div>
 														<div className="tp-product-rating-text">
-															<span>({product.rating} Review)</span>
+															<span>{product.rating}</span>
 														</div>
 													</div>
 													<div className="tp-product-price-wrapper">
