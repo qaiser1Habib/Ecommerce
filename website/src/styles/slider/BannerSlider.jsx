@@ -2,6 +2,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
+import { Link } from "react-router-dom";
 
 export default function BannerSlider() {
 	const swiperProps = {
@@ -55,7 +56,7 @@ export default function BannerSlider() {
 											off this week
 										</p>
 										<div className="tp-slider-btn">
-											<a href="shop.html" className="tp-btn tp-btn-2 tp-btn-white">
+											<Link to="/shop" className="tp-btn tp-btn-2 tp-btn-white">
 												Shop Now
 												<svg
 													width={17}
@@ -80,7 +81,7 @@ export default function BannerSlider() {
 														strokeLinejoin="round"
 													/>
 												</svg>
-											</a>
+											</Link>
 										</div>
 									</div>
 								</div>
@@ -203,7 +204,7 @@ export default function BannerSlider() {
 											off this week
 										</p>
 										<div className="tp-slider-btn">
-											<a href="shop.html" className="tp-btn tp-btn-2 tp-btn-white">
+											<Link to="/shop" className="tp-btn tp-btn-2 tp-btn-white">
 												Shop Now
 												<svg
 													width={17}
@@ -228,7 +229,7 @@ export default function BannerSlider() {
 														strokeLinejoin="round"
 													/>
 												</svg>
-											</a>
+											</Link>
 										</div>
 									</div>
 								</div>

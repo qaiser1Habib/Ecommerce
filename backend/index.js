@@ -1,6 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const productsRouter = require("./routes/routes");
+const productsRouter = require("./routes/prouduct.js");
+const userRouter = require("./routes/user.js");
+const cartRouter = require("./routes/cart.js");
+const orderRouter = require("./routes/order.js");
 const cors = require("cors");
 require("./utils/constants.js");
 
@@ -16,6 +19,9 @@ app.use(
 );
 
 app.use("/products", productsRouter.router);
+app.use("/user", userRouter.router);
+app.use("/cart", cartRouter.router);
+app.use("/order", orderRouter.router);
 
 app.get("/", (req, res) => {
 	res.send(products);

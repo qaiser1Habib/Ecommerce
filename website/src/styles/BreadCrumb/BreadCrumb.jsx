@@ -1,16 +1,18 @@
-const BreadCrumb = () => {
+import { Link } from "react-router-dom";
+
+const BreadCrumb = (props) => {
 	return (
-		<section className="breadcrumb__area include-bg pt-100 pb-50">
+		<section className="breadcrumb__area include-bg pt-50 pb-50">
 			<div className="container">
 				<div className="row">
 					<div className="col-xxl-12">
 						<div className="breadcrumb__content p-relative z-index-1">
-							<h3 className="breadcrumb__title">Shop</h3>
+							<h3 className="breadcrumb__title">{props.page}</h3>
 							<div className="breadcrumb__list">
 								<span>
-									<a href="#">Home</a>
+									<Link to="/">Home</Link>
 								</span>
-								<span>Shop</span>
+								<span className="cursor-pointer">{props.page}</span>
 							</div>
 						</div>
 					</div>

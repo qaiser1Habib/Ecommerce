@@ -1,30 +1,49 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { fetchProductByIdAsync } from "../actions/productSlice";
 import { selectProductDetail } from "../store/redux/products";
 import { useToast } from "../store/hooks/useToast";
+import { userSelector } from "../store/redux/auth";
+import { addToCartAsync } from "../actions/cart";
 
 const ProductDetail = () => {
 	const dispatch = useDispatch();
 	const product = useSelector(selectProductDetail) || {};
 	const params = useParams();
 	const { notify } = useToast();
+	const [quantity, setQuantity] = useState(1);
+
+	const productImages = product?.images || [];
+	const rating = product.rating;
+
+	const stars = Array.from({ length: 5 }, (_, index) => {
+		if (index < Math.ceil(rating)) {
+			return <i key={index} className="fa-solid fa-star" style={{ color: "#FFB21D" }} />;
+		}
+	});
+
+	const increaseQuantity = () => {
+		setQuantity(quantity + 1);
+	};
+
+	const decreaseQuantity = () => {
+		if (quantity > 0) {
+			setQuantity(quantity - 1);
+		}
+	};
+	const user = useSelector(userSelector);
+
+	const handleCart = () => {
+		dispatch(addToCartAsync({ formData: { product: product.id, user: user.id, quantity: quantity }, notify }));
+	};
+
 	useEffect(() => {
 		if (params?.id) {
 			dispatch(fetchProductByIdAsync({ formData: { id: params.id }, notify }));
 		}
 	}, [dispatch, params.id]);
 
-	const productImages = product?.images || [];
-	const rating = product.rating; // Assuming product.rating is a number from 0 to 5
-
-	// Create an array of 5 elements and generate the star elements based on the rating
-	const stars = Array.from({ length: 5 }, (_, index) => {
-		if (index < Math.ceil(rating)) {
-			return <i key={index} className="fa-solid fa-star" style={{ color: "#FFB21D" }} />;
-		}
-	});
 	return (
 		<section className="tp-product-details-area">
 			<div className="tp-product-details-top pb-115">
@@ -79,14 +98,14 @@ const ProductDetail = () => {
 										})}
 									</div>
 								</div>
-							</div>{" "}
+							</div>
 							<div className="col-xl-5 col-lg-6">
 								<div className="tp-product-details-wrapper">
 									<div className="tp-product-details-category">
-										<span>Computers &amp; Tablets</span>
+										<span>{product.category}</span>
 									</div>
 									<h3 className="tp-product-details-title">{product.title}</h3>
-									{/* inventory details */}
+
 									<div className="tp-product-details-inventory d-flex align-items-center mb-10">
 										<div className="tp-product-details-stock mb-10">
 											<span>In Stock</span>
@@ -99,12 +118,12 @@ const ProductDetail = () => {
 										</div>
 									</div>
 									<p>{product.description}</p>
-									{/* price */}
+
 									<div className="tp-product-details-price-wrapper mb-20">
-										<span className="tp-product-details-price old-price me-2">
-											$ {Math.round(product.price * (1 - product.discountPercentage / 100))}
+										<span className="tp-product-details-price old-price me-2">$ {product.price}</span>
+										<span className="tp-product-details-price new-price">
+											${Math.round(product.price * (1 - product.discountPercentage / 100))}
 										</span>
-										<span className="tp-product-details-price new-price">${product.price}</span>
 									</div>
 
 									<div className="tp-product-details-action-wrapper">
@@ -112,55 +131,21 @@ const ProductDetail = () => {
 										<div className="tp-product-details-action-item-wrapper d-flex align-items-center">
 											<div className="tp-product-details-quantity">
 												<div className="tp-product-quantity mb-15 mr-15">
-													<span className="tp-cart-minus">
-														<svg
-															width={11}
-															height={2}
-															viewBox="0 0 11 2"
-															fill="none"
-															xmlns="http://www.w3.org/2000/svg"
-														>
-															<path
-																d="M1 1H10"
-																stroke="currentColor"
-																strokeWidth="1.5"
-																strokeLinecap="round"
-																strokeLinejoin="round"
-															/>
-														</svg>
+													<span className="tp-cart-minus" onClick={decreaseQuantity}>
+														<i className="fa fa-minus" aria-hidden="true"></i>
 													</span>
-													<input className="tp-cart-input" type="text" defaultValue={1} />
-													<span className="tp-cart-plus">
-														<svg
-															width={11}
-															height={12}
-															viewBox="0 0 11 12"
-															fill="none"
-															xmlns="http://www.w3.org/2000/svg"
-														>
-															<path
-																d="M1 6H10"
-																stroke="currentColor"
-																strokeWidth="1.5"
-																strokeLinecap="round"
-																strokeLinejoin="round"
-															/>
-															<path
-																d="M5.5 10.5V1.5"
-																stroke="currentColor"
-																strokeWidth="1.5"
-																strokeLinecap="round"
-																strokeLinejoin="round"
-															/>
-														</svg>
+													<input className="tp-cart-input" type="text" value={quantity} readOnly />
+													<span className="tp-cart-plus" onClick={increaseQuantity}>
+														<i className="fa fa-plus" aria-hidden="true"></i>
 													</span>
 												</div>
 											</div>
 											<div className="tp-product-details-add-to-cart mb-15 w-100">
-												<button className="tp-product-details-add-to-cart-btn w-100">Add To Cart</button>
+												<button onClick={() => handleCart()} className="tp-product-details-add-to-cart-btn w-100">
+													Add To Cart
+												</button>
 											</div>
 										</div>
-										<button className="tp-product-details-buy-now-btn w-100">Buy Now</button>
 									</div>
 									<div className="tp-product-details-action-sm">
 										<button type="button" className="tp-product-details-action-sm-btn">
@@ -366,7 +351,7 @@ const ProductDetail = () => {
 																<div className="tp-product-details-desc-content">
 																	<h3 className="tp-product-details-desc-title">Draw inspiration with S Pen</h3>
 																	<p>
-																		S Pen is a bundle of writing instruments in one. Its natural grip, <br />{" "}
+																		S Pen is a bundle of writing instruments in one. Its natural grip, <br />
 																		low latency and impressive pressure sensitivity will make it your go-to for
 																		everything from drawing to editing documents. And S Pen won't get misplaced
 																		thanks.
@@ -543,7 +528,7 @@ const ProductDetail = () => {
 																	<div className="tp-product-details-review-rating-percent">
 																		<span>82%</span>
 																	</div>
-																</div>{" "}
+																</div>
 															
 																
 																<div className="tp-product-details-review-rating-item d-flex align-items-center">
@@ -558,7 +543,7 @@ const ProductDetail = () => {
 																	<div className="tp-product-details-review-rating-percent">
 																		<span>30%</span>
 																	</div>
-																</div>{" "}
+																</div>
 															
 																
 																<div className="tp-product-details-review-rating-item d-flex align-items-center">
@@ -573,7 +558,7 @@ const ProductDetail = () => {
 																	<div className="tp-product-details-review-rating-percent">
 																		<span>15%</span>
 																	</div>
-																</div>{" "}
+																</div>
 															
 																
 																<div className="tp-product-details-review-rating-item d-flex align-items-center">
@@ -588,7 +573,7 @@ const ProductDetail = () => {
 																	<div className="tp-product-details-review-rating-percent">
 																		<span>6%</span>
 																	</div>
-																</div>{" "}
+																</div>
 															
 																
 																<div className="tp-product-details-review-rating-item d-flex align-items-center">
@@ -603,7 +588,7 @@ const ProductDetail = () => {
 																	<div className="tp-product-details-review-rating-percent">
 																		<span>10%</span>
 																	</div>
-																</div>{" "}
+																</div>
 															
 															</div>
 														</div>
@@ -680,7 +665,7 @@ const ProductDetail = () => {
 															</div>
 														</div>
 													</div>
-												</div>{" "}
+												</div>
 											
 												<div className="col-lg-6">
 													<div className="tp-product-details-review-form">

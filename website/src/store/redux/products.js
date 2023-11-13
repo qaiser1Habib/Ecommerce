@@ -42,9 +42,6 @@ export const { clearSelectedProduct } = productSlice.actions;
 export const selectAllProducts = (state) => state.product.products;
 export const selectTotalItems = (state) => state.product.totalItems;
 export const selectProductDetail = (state) => state.product.singleProduct;
-// export const selectBrands = (state) => state.product.brands;
-// export const selectCategories = (state) => state.product.categories;
-// export const selectProductById = (state) => state.product.selectedProduct;
-// export const selectProductListStatus = (state) => state.product.status;
+
 
 export default productSlice.reducer;

@@ -72,8 +72,7 @@ const ProductList = () => {
 
 	return (
 		<>
-			<BreadCrumb />
-
+			<BreadCrumb page="Shop" />
 			<section className="tp-shop-area pb-120">
 				<div className="container">
 					<div className="row">
@@ -486,10 +485,10 @@ const ProductList = () => {
 																		</span>
 																	</div>
 																	<div className="tp-product-price-wrapper-2">
-																		<span className="tp-product-price old-price me-1">
-																			$ {Math.round(product.price * (1 - product.discountPercentage / 100))}
+																		<span className="tp-product-price old-price me-1">$ {product.price}</span>
+																		<span className="tp-product-price new-price">
+																			${Math.round(product.price * (1 - product.discountPercentage / 100))}
 																		</span>
-																		<span className="tp-product-price new-price">${product.price}</span>
 																	</div>
 																</div>
 															</div>

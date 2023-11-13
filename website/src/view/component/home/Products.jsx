@@ -189,9 +189,9 @@ const Products = (props) => {
 													</div>
 													<div className="tp-product-price-wrapper">
 														<span className="tp-product-price old-price me-1">
-															$ {Math.round(product.price * (1 - product.discountPercentage / 100))}
+															$ {product.price}
 														</span>
-														<span className="tp-product-price new-price">${product.price}</span>
+														<span className="tp-product-price new-price">$ {Math.round(product.price * (1 - product.discountPercentage / 100))}</span>
 													</div>
 												</div>
 											</div>
