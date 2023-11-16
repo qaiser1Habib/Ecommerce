@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { fetchProductByIdAsync } from "../actions/productSlice";
 import { selectProductDetail } from "../store/redux/products";
 import { useToast } from "../store/hooks/useToast";
-import { userSelector } from "../store/redux/auth";
+import { userLoggedIn } from "../store/redux/auth";
 import { addToCartAsync } from "../actions/cart";
 
 const ProductDetail = () => {
@@ -32,10 +32,10 @@ const ProductDetail = () => {
 			setQuantity(quantity - 1);
 		}
 	};
-	const user = useSelector(userSelector);
+	const user = useSelector(userLoggedIn);
 
 	const handleCart = () => {
-		dispatch(addToCartAsync({ formData: { product: product.id, user: user.id, quantity: quantity }, notify }));
+		dispatch(addToCartAsync({ formData: { product: product.id, user: user?.id, quantity: quantity }, notify }));
 	};
 
 	useEffect(() => {

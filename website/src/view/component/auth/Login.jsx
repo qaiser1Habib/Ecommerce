@@ -104,7 +104,7 @@ const Login = () => {
 													<label htmlFor="remeber">Remember me</label>
 												</div>
 												<div className="tp-login-forgot">
-													<Link to="/ForgotPassword">Forgot Password?</Link>
+													<Link to="/forgotPassword">Forgot Password?</Link>
 												</div>
 											</div>
 											<div className="tp-login-bottom">

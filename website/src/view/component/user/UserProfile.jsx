@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const UserProfile = (props) => {
 	return (
 		<div className="tab-pane fade show active">
@@ -25,9 +27,9 @@ const UserProfile = (props) => {
 						</div>
 						<div className="col-md-6">
 							<div className="profile__main-logout text-sm-end">
-								<a href="login.html" className="tp-logout-btn">
+								<Link to="/logout" className="tp-logout-btn">
 									Logout
-								</a>
+								</Link>
 							</div>
 						</div>
 					</div>

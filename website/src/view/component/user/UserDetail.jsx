@@ -1,7 +1,7 @@
-
 const UserDetail = (props) => {
+	const user = props?.user;
 	return (
-		<div className="tab-pane fade show active" >
+		<div className="tab-pane fade show active">
 			<div className="profile__info">
 				<h3 className="profile__info-title">Personal Details</h3>
 				<div className="profile__info-content">
@@ -10,7 +10,7 @@ const UserDetail = (props) => {
 							<div className="col-xxl-6 col-md-6">
 								<div className="profile__input-box">
 									<div className="profile__input">
-										<input type="text" placeholder="Enter your username" defaultValue="Shahnewaz Sakil" />
+										<input type="text" placeholder="Enter your username" defaultValue={user.name} />
 										<span>
 											<svg width={17} height={19} viewBox="0 0 17 19" fill="none" xmlns="http://www.w3.org/2000/svg">
 												<path
@@ -35,7 +35,7 @@ const UserDetail = (props) => {
 							<div className="col-xxl-6 col-md-6">
 								<div className="profile__input-box">
 									<div className="profile__input">
-										<input type="email" placeholder="Enter your email" defaultValue="example@mail.com" />
+										<input type="email" placeholder="Enter your email" defaultValue={user.email} />
 										<span>
 											<svg width={18} height={16} viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 												<path
@@ -59,30 +59,11 @@ const UserDetail = (props) => {
 									</div>
 								</div>
 							</div>
+
 							<div className="col-xxl-6 col-md-6">
 								<div className="profile__input-box">
 									<div className="profile__input">
-										<input type="text" placeholder="Enter username" defaultValue="shahnewzname" />
-										<span>
-											<i className="fa-brands fa-facebook-f" />
-										</span>
-									</div>
-								</div>
-							</div>
-							<div className="col-xxl-6 col-md-6">
-								<div className="profile__input-box">
-									<div className="profile__input">
-										<input type="text" placeholder="Enter username" defaultValue="shahnewzname" />
-										<span>
-											<i className="fa-brands fa-twitter" />
-										</span>
-									</div>
-								</div>
-							</div>
-							<div className="col-xxl-6 col-md-6">
-								<div className="profile__input-box">
-									<div className="profile__input">
-										<input type="text" placeholder="Enter your number" defaultValue="0123 456 7889" />
+										<input type="text" placeholder="Enter your number" defaultValue={user.phone} />
 										<span>
 											<svg width={15} height={18} viewBox="0 0 15 18" fill="none" xmlns="http://www.w3.org/2000/svg">
 												<path

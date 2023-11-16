@@ -89,12 +89,33 @@ const login = async (request, response) => {
 	}
 };
 
-const updateUser = async (request, response) => {
-	console.log(request.body);
+const getUser = async (request, response) => {
 	try {
-		const { id, addresses } = request.body;
+		const { user } = request.query;
+		if (!user) {
+			return sendJsonResponse(response, HTTP_STATUS_CODES.UNAUTHORIZED, false, "Access denied!", null);
+		}
+		const dbUser = await User.findById(user);
+		const docs = {
+			id: dbUser.id,
+			email: dbUser.email,
+			role: dbUser.role,
+			name: dbUser.name,
+			addresses: dbUser.addresses,
+		};
+		return sendJsonResponse(response, HTTP_STATUS_CODES.OK, true, "Record Found", docs);
+	} catch (error) {
+		return sendJsonResponse(response, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR, false, "Error!", {
+			error: error?.message || error,
+		});
+	}
+};
 
-		if ((!id, !addresses)) {
+const updateUser = async (request, response) => {
+	try {
+		const { id } = request.body;
+
+		if (!id) {
 			return sendJsonResponse(response, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!", null);
 		}
 
@@ -123,7 +144,7 @@ module.exports = {
 	register,
 	login,
 	updateUser,
-	// getUser,
+	getUser,
 	// getUserImage,
 	// updatePassword,
 	// sendUserVerificationEmail,

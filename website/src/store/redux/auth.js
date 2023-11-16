@@ -1,9 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginUser, registerUserAsync, updateUserAsync } from "../../actions/auth";
+import { loginUser, registerUserAsync, signOut } from "../../actions/auth";
 
 const initialState = {
-	userInfo: {},
-	loggedIn: false,
+	loggedIn: null,
 	status: "idle",
 };
 export const authSlice = createSlice({
@@ -21,26 +20,21 @@ export const authSlice = createSlice({
 			})
 			.addCase(registerUserAsync.fulfilled, (state, action) => {
 				state.status = "idle";
-				state.userInfo = action?.payload || {};
+				state.loggedIn = action?.payload || {};
 			})
 			.addCase(loginUser.pending, (state) => {
 				state.status = "loading";
 			})
 			.addCase(loginUser.fulfilled, (state, action) => {
 				state.status = "idle";
-				state.userInfo = action?.payload || {};
-				state.loggedIn = action?.payload ? true : false;
+				state.loggedIn = action?.payload || {};
 			})
-			.addCase(updateUserAsync.pending, (state) => {
+			.addCase(signOut.pending, (state) => {
 				state.status = "loading";
 			})
-			.addCase(updateUserAsync.fulfilled, (state, action) => {
+			.addCase(signOut.fulfilled, (state, action) => {
 				state.status = "idle";
-				state.userInfo = action?.payload || {};
-			})
-			.addCase(updateUserAsync.rejected, (state, action) => {
-				state.status = "idle";
-				console.log(action?.error);
+				state.loggedIn = null;
 			});
 	},
 });
@@ -48,6 +42,5 @@ export const authSlice = createSlice({
 export const { clearSelectedProduct } = authSlice.actions;
 
 export const userLoggedIn = (state) => state.auth.loggedIn;
-export const userSelector = (state) => state.auth.userInfo;
 
 export default authSlice.reducer;

@@ -3,18 +3,18 @@ import BreadCrumb from "../styles/BreadCrumb/BreadCrumb";
 import { useDispatch, useSelector } from "react-redux";
 import { selectItems } from "../store/redux/cart";
 import { discountedPrice } from "../utils/constants";
-import { updateUserAsync } from "../actions/auth";
-import { userSelector } from "../store/redux/auth";
+import { updateUserAsync } from "../actions/user";
 import { useToast } from "../store/hooks/useToast";
 import { useState } from "react";
 import { createOrderAsync } from "../actions/order";
 import { selectCurrentOrder } from "../store/redux/order";
 import { Navigate } from "react-router-dom";
+import { selectUserInfo } from "../store/redux/user";
 
 const Checkout = () => {
 	const { register, handleSubmit, reset } = useForm();
 	const items = useSelector(selectItems);
-	const user = useSelector(userSelector);
+	const user = useSelector(selectUserInfo);
 	const [selectedAddress, setSelectedAddress] = useState(null);
 	const [paymentMethod, setPaymentMethod] = useState("Cash_on_Delivery");
 	const dispatch = useDispatch();
@@ -41,7 +41,7 @@ const Checkout = () => {
 			createOrderAsync({
 				formData: {
 					items,
-					userID: user.id,
+					userID: user?.id,
 					totalPrice,
 					totalItems,
 					selectedAddress,

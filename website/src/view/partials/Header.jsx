@@ -1,10 +1,10 @@
 import { useSelector } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
-import { userSelector } from "../../store/redux/auth";
+import { userLoggedIn } from "../../store/redux/auth";
 import { selectItems } from "../../store/redux/cart";
 
 const Header = () => {
-	const user = useSelector(userSelector);
+	const user = useSelector(userLoggedIn);
 	const cartItems = useSelector(selectItems);
 
 	return (

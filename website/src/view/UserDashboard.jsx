@@ -7,21 +7,20 @@ import UserShippingAddress from "./component/user/UserAddress";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "../store/hooks/useToast";
-import { selectUserOrder } from "../store/redux/user";
+import { selectUserInfo, selectUserOrder } from "../store/redux/user";
 import { loginUserOrderAsync } from "../actions/user";
-import { userSelector } from "../store/redux/auth";
 
 const User = () => {
 	const [currentComponent, setCurrentComponent] = useState("UserProfile");
 	const dispatch = useDispatch();
 	const orders = useSelector(selectUserOrder);
-	const user = useSelector(userSelector);
+	const user = useSelector(selectUserInfo);
 
 	const { notify } = useToast();
 	const renderCurrentComponent = () => {
 		switch (currentComponent) {
 			case "UserDetail":
-				return <UserDetail />;
+				return <UserDetail user={user} />;
 			case "UserProfile":
 				return <UserProfile user={user} order={orders} />;
 			case "UserOrders":
@@ -29,7 +28,7 @@ const User = () => {
 			case "UserActivity":
 				return <UserActivity />;
 			case "UserShippingAddress":
-				return <UserShippingAddress orders={orders} />;
+				return <UserShippingAddress user={user} orders={orders} />;
 			case "UserChangePassword":
 				return <UserChangePassword />;
 			default:
@@ -38,7 +37,7 @@ const User = () => {
 	};
 
 	useEffect(() => {
-		dispatch(loginUserOrderAsync({ formData: { userID: user.id }, notify }));
+		dispatch(loginUserOrderAsync({ formData: { userID: user?.id }, notify }));
 	}, [dispatch, user]);
 	return (
 		<main>

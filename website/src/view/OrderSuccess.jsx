@@ -3,7 +3,7 @@ import { discountedPrice } from "../utils/constants";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { resetCartAsync } from "../actions/cart";
-import { userSelector } from "../store/redux/auth";
+import { userLoggedIn } from "../store/redux/auth";
 import { useToast } from "../store/hooks/useToast";
 import { resetOrder } from "../store/redux/order";
 
@@ -11,7 +11,7 @@ const OrderSuccess = () => {
 	const dispatch = useDispatch();
 	const location = useLocation();
 	const order = location?.state?.order;
-	const user = useSelector(userSelector);
+	const user = useSelector(userLoggedIn);
 	const { notify } = useToast();
 	useEffect(() => {
 		dispatch(resetCartAsync({ formData: { user: user?.id }, notify }));

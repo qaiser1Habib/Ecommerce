@@ -3,10 +3,11 @@ import Footer from "./view/partials/Footer";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { userSelector } from "./store/redux/auth";
+import { userLoggedIn } from "./store/redux/auth";
 import { fetchCartByUserAsync } from "./actions/cart";
 import { useEffect, lazy, Suspense } from "react";
 import { useToast } from "./store/hooks/useToast";
+import { loginUserAsync } from "./actions/user";
 
 const LazyComponents = {
 	Home: lazy(() => import("./view/Home")),
@@ -16,10 +17,11 @@ const LazyComponents = {
 	ForgotPassword: lazy(() => import("./view/component/auth/ForgotPassword")),
 	ProductDetail: lazy(() => import("./view/ProductDetail")),
 	Cart: lazy(() => import("./view/Cart")),
-	User: lazy(() => import("./view/User")),
+	UserDashboard: lazy(() => import("./view/UserDashboard")),
 	Checkout: lazy(() => import("./view/Checkout")),
 	OrderSuccess: lazy(() => import("./view/OrderSuccess")),
 	ErrorPage: lazy(() => import("./view/ErrorPage")),
+	Logout: lazy(() => import("./view/component/auth/Logout")),
 };
 const LoadingComponent = (
 	<div id="loading">
@@ -43,12 +45,13 @@ const LoadingComponent = (
 	</div>
 );
 function App() {
-	const user = useSelector(userSelector);
+	const user = useSelector(userLoggedIn);
 	const dispatch = useDispatch();
 	const { notify } = useToast();
 
 	useEffect(() => {
-		dispatch(fetchCartByUserAsync({ formData: { user: user.id }, notify }));
+		dispatch(fetchCartByUserAsync({ formData: { user: user?.id }, notify }));
+		if (user) dispatch(loginUserAsync({ formData: { user: user?.id }, notify }));
 	}, [dispatch, user, notify]);
 
 	return (
@@ -62,11 +65,12 @@ function App() {
 						<Route path="/product-detail/:id" element={<LazyComponents.ProductDetail />} />
 						<Route path="/login" element={<LazyComponents.Login />} />
 						<Route path="/register" element={<LazyComponents.Register />} />
-						<Route path="/ForgotPassword" element={<LazyComponents.ForgotPassword />} />
+						<Route path="/forgotPassword" element={<LazyComponents.ForgotPassword />} />
 						<Route path="/Cart" element={<LazyComponents.Cart />} />
 						<Route path="/checkout" element={<LazyComponents.Checkout />} />
 						<Route path="/order-success" element={<LazyComponents.OrderSuccess />} />
-						<Route path="/user" element={<LazyComponents.User />} />
+						<Route path="/user" element={<LazyComponents.UserDashboard />} />
+						<Route path="/logout" element={<LazyComponents.Logout />} />
 						<Route path="*" element={<LazyComponents.ErrorPage />} />
 					</Routes>
 				</Suspense>

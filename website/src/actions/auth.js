@@ -28,14 +28,14 @@ export const loginUser = createAsyncThunk("auth/loginUser", async ({ formData, n
 	}
 });
 
-export const updateUserAsync = createAsyncThunk("auth/updateUser", async ({ formData, notify }, { dispatch }) => {
+export const signOut = createAsyncThunk("auth/signOut", async ({ formData, notify }, { dispatch }) => {
 	try {
-		const {payload} = await api.updateUser(formData);
-		if (payload) {
-			// await setToken(payload.token);
-			notify("success", "Address Added successful");
-			return payload;
-		}
+		// const { payload } = await api.loginUser(formData);
+		// if (payload) {
+		// 	// await setToken(payload.token);
+		// }
+		notify("success", "logout successful");
+		return { payload: "successfully logout" };
 	} catch (error) {
 		if (error?.message) notify("warning", error?.message ? error.message : "Invalid Login Credentials!");
 	}
