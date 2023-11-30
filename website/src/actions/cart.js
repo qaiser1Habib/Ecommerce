@@ -48,7 +48,6 @@ export const resetCartAsync = createAsyncThunk("cart/resetCart", async ({ formDa
 	try {
 		const response = await api.fetchCartByUser(formData);
 		let items = response.payload;
-		console.log(items);
 		for (let item of items) {
 			await api.removeFromCart({ id: item.id });
 		}

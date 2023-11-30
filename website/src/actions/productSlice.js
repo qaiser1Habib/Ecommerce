@@ -14,9 +14,9 @@ export const fetchAllProductsAsync = createAsyncThunk("product/fetchAllProducts"
 		dispatch(apiErrorHandler(error, notify));
 	}
 });
-export const fetchProductByIdAsync = createAsyncThunk("product/fetchByProducts", async ({ formData, notify }, { dispatch }) => {
+export const fetchProductByIdAsync = createAsyncThunk("product/fetchProductById", async ({ formData, notify }, { dispatch }) => {
 	try {
-		const { payload } = await api.fetchByProducts(formData);
+		const { payload } = await api.fetchProductById(formData);
 
 		if (payload) {
 			return payload;

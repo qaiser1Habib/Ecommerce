@@ -30,25 +30,6 @@ const Dashboard = ({ funcShow }) => {
 												<div className="d-flex justify-content-between">
 													<div className="symbol symbol-30px me-5 mb-8">
 														<span className="symbol-label">
-															<span className="fs-2qx fa fa-list  text-primary"></span>
-														</span>
-													</div>
-
-													<div className="symbol   me-5 mb-8">
-														<span className="text-dark fw-bold d-block fs-2qx lh-1 mb-1">1</span>
-													</div>
-												</div>
-
-												<div className=" mt-10">
-													<span className="text-gray-700 fw-bold fs-2">Discover Doard</span>
-												</div>
-											</div>
-										</div>
-										<div className="col-md-3">
-											<div className="bg-gray-100 bg-opacity-70 rounded-2 px-6 py-5 ">
-												<div className="d-flex justify-content-between">
-													<div className="symbol symbol-30px me-5 mb-8">
-														<span className="symbol-label">
 															<span className="fs-2qx fa fa-window-restore  text-primary"></span>
 														</span>
 													</div>
@@ -78,7 +59,45 @@ const Dashboard = ({ funcShow }) => {
 												</div>
 
 												<div className=" mt-10">
-													<span className="text-gray-700 fw-bold fs-2">Pricing</span>
+													<span className="text-gray-700 fw-bold fs-2">Products</span>
+												</div>
+											</div>
+										</div>
+										<div className="col-md-3">
+											<div className="bg-gray-100 bg-opacity-70 rounded-2 px-6 py-5 ">
+												<div className="d-flex justify-content-between">
+													<div className="symbol symbol-30px me-5 mb-8">
+														<span className="symbol-label">
+															<span className="fs-2qx fas fa-dollar text-primary"></span>
+														</span>
+													</div>
+
+													<div className="symbol   me-5 mb-8">
+														<span className="text-dark fw-bold d-block fs-2qx lh-1 mb-1">1</span>
+													</div>
+												</div>
+
+												<div className=" mt-10">
+													<span className="text-gray-700 fw-bold fs-2">Categories</span>
+												</div>
+											</div>
+										</div>
+										<div className="col-md-3">
+											<div className="bg-gray-100 bg-opacity-70 rounded-2 px-6 py-5 ">
+												<div className="d-flex justify-content-between">
+													<div className="symbol symbol-30px me-5 mb-8">
+														<span className="symbol-label">
+															<span className="fs-2qx fa fa-user text-primary"></span>
+														</span>
+													</div>
+
+													<div className="symbol   me-5 mb-8">
+														<span className="text-dark fw-bold d-block fs-2qx lh-1 mb-1">6</span>
+													</div>
+												</div>
+
+												<div className=" mt-10">
+													<span className="text-gray-700 fw-bold fs-2">Brands</span>
 												</div>
 											</div>
 										</div>

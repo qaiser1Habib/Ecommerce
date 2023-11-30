@@ -37,7 +37,7 @@ const User = () => {
 	};
 
 	useEffect(() => {
-		dispatch(loginUserOrderAsync({ formData: { userID: user?.id }, notify }));
+		dispatch(loginUserOrderAsync({ formData: {}, notify }));
 	}, [dispatch, user]);
 	return (
 		<main>

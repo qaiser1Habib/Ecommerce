@@ -1,7 +1,12 @@
 const express = require("express");
 const { fetchCartByUser, addToCart, removeFromCart, updateCartItem } = require("../controller/cart");
+const { jwtAuthentication } = require("../middlewares/authentications/jwtAuthentication.js");
 
 const router = express.Router();
-router.post("/", addToCart).get("/", fetchCartByUser).delete("/", removeFromCart).patch("/", updateCartItem);
+router
+	.post("/", jwtAuthentication, addToCart)
+	.get("/", jwtAuthentication, fetchCartByUser)
+	.delete("/", removeFromCart)
+	.patch("/", jwtAuthentication, updateCartItem);
 
 exports.router = router;

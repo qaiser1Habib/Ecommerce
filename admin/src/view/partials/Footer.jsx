@@ -4,7 +4,7 @@ const adminFooter = () => {
 
   return (
     <div className="container mt-auto">
-      <div className="row">
+      <div className="row mt-5">
         <div className="col-12 text-center">
           <p className="footer__text">
             Copyright <i className="fa fa-copyright"></i> {currentYear}{" "}

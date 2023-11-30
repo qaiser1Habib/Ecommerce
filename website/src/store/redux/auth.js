@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { loginUser, registerUserAsync, signOut } from "../../actions/auth";
 
 const initialState = {
-	loggedIn: null,
+	loggedInUserToken: false,
 	status: "idle",
 };
 export const authSlice = createSlice({
@@ -20,27 +20,27 @@ export const authSlice = createSlice({
 			})
 			.addCase(registerUserAsync.fulfilled, (state, action) => {
 				state.status = "idle";
-				state.loggedIn = action?.payload || {};
+				state.loggedInUserToken = action?.payload || false;
 			})
 			.addCase(loginUser.pending, (state) => {
 				state.status = "loading";
 			})
 			.addCase(loginUser.fulfilled, (state, action) => {
 				state.status = "idle";
-				state.loggedIn = action?.payload || {};
+				state.loggedInUserToken = action?.payload || false;
 			})
 			.addCase(signOut.pending, (state) => {
 				state.status = "loading";
 			})
-			.addCase(signOut.fulfilled, (state, action) => {
+			.addCase(signOut.fulfilled, (state) => {
 				state.status = "idle";
-				state.loggedIn = null;
-			});
+				state.loggedInUserToken = false;
+			})
 	},
 });
 
 export const { clearSelectedProduct } = authSlice.actions;
 
-export const userLoggedIn = (state) => state.auth.loggedIn;
+export const userLoggedIn = (state) => state.auth.loggedInUserToken;
 
 export default authSlice.reducer;

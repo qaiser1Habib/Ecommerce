@@ -150,15 +150,17 @@ const Header = () => {
 									<li className="nav-item">
 										<NavLink to="/banners">Banners</NavLink>
 									</li>
-
 									<li className="nav-item">
 										<NavLink to="/products">Products</NavLink>
+									</li>
+									<li className="nav-item">
+										<NavLink to="/categories">Categories</NavLink>
 									</li>
 									<li className="nav-item">
 										<NavLink to="/user">Users</NavLink>
 									</li>
 									<li className="nav-item">
-										<NavLink to="/categories">Categories</NavLink>
+										<NavLink to="/order">Orders</NavLink>
 									</li>
 								</ul>
 							</div>

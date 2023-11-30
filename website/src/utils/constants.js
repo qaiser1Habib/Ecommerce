@@ -27,6 +27,7 @@ export const HTTP_STATUS_CODES = {
 	INTERNAL_SERVER_ERROR: 500,
 };
 export const ITEMS_PER_PAGE = 12;
+
 export function discountedPrice(item) {
 	return Math.round(item.price * (1 - item.discountPercentage / 100), 2);
 }

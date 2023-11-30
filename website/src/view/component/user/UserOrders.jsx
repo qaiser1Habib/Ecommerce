@@ -26,8 +26,10 @@ const userOrders = (props) => {
 
 								<td
 									className={`status ${order.status === "pending" && "pending"} ${
-										order.status === "resolve" && "done"
-									} ${order.status === "hold" && "hold"}`}
+										order.status === "delivered" && "delivered"
+									} ${order.status === "dispatch" && "dispatch"} ${order.status === "hold" && "hold"} ${
+										order.status === "cancel" && "cancel"
+									}`}
 									data-info={`status ${order.status}`}
 								>
 									{order.status}

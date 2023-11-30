@@ -12,6 +12,7 @@ import Users from "./view/Users";
 import ViewProfile from "./view/viewProfile";
 import Products from "./view/products";
 import Categories from "./view/Categories";
+import Orders from "./view/Orders";
 
 function App() {
 	const [showAdminHeaderFooter, setShowAdminHeaderFooter] = useState(true);
@@ -39,6 +40,7 @@ function App() {
 						<Route path="/products" element={<Products />} />
 						<Route path="/categories" element={<Categories />} />
 						<Route path="/profile" element={<ViewProfile />} />
+						<Route path="/order" element={<Orders />} />
 					</Routes>
 					{showAdminHeaderFooter && <Footer />}
 				</div>

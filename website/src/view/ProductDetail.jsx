@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom";
 import { fetchProductByIdAsync } from "../actions/productSlice";
 import { selectProductDetail } from "../store/redux/products";
 import { useToast } from "../store/hooks/useToast";
-import { userLoggedIn } from "../store/redux/auth";
 import { addToCartAsync } from "../actions/cart";
+import { selectItems } from "../store/redux/cart";
 
 const ProductDetail = () => {
 	const dispatch = useDispatch();
@@ -13,6 +13,7 @@ const ProductDetail = () => {
 	const params = useParams();
 	const { notify } = useToast();
 	const [quantity, setQuantity] = useState(1);
+	const items = useSelector(selectItems);
 
 	const productImages = product?.images || [];
 	const rating = product.rating;
@@ -32,10 +33,15 @@ const ProductDetail = () => {
 			setQuantity(quantity - 1);
 		}
 	};
-	const user = useSelector(userLoggedIn);
 
 	const handleCart = () => {
-		dispatch(addToCartAsync({ formData: { product: product.id, user: user?.id, quantity: quantity }, notify }));
+		// const findItem = ;
+
+		if (items.findIndex((item) => item.product.id === product.id) < 0) {
+			dispatch(addToCartAsync({ formData: { product: product.id, quantity: quantity }, notify }));
+		} else {
+			notify("error", "Product Already in Cart.");
+		}
 	};
 
 	useEffect(() => {

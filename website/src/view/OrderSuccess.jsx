@@ -14,11 +14,10 @@ const OrderSuccess = () => {
 	const user = useSelector(userLoggedIn);
 	const { notify } = useToast();
 	useEffect(() => {
-		dispatch(resetCartAsync({ formData: { user: user?.id }, notify }));
+		dispatch(resetCartAsync({ formData: {}, notify }));
 		dispatch(resetOrder());
 	}, [useEffect, user]);
 
-	console.log(order)
 
 	return (
 		<>

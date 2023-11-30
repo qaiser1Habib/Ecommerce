@@ -50,8 +50,8 @@ function App() {
 	const { notify } = useToast();
 
 	useEffect(() => {
-		dispatch(fetchCartByUserAsync({ formData: { user: user?.id }, notify }));
-		if (user) dispatch(loginUserAsync({ formData: { user: user?.id }, notify }));
+		dispatch(fetchCartByUserAsync({ formData: {}, notify }));
+		dispatch(loginUserAsync({ formData: {}, notify }));
 	}, [dispatch, user, notify]);
 
 	return (

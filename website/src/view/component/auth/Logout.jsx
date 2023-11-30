@@ -11,8 +11,8 @@ const Logout = () => {
 	const { notify } = useToast();
 
 	useEffect(() => {
-		dispatch(signOut({ formData: {}, notify }));
-	});
+		dispatch(signOut(notify));
+	}, []);
 
 	return <>{!user && <Navigate to="/login" replace={true} />}</>;
 };

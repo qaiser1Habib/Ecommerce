@@ -1,6 +1,12 @@
 const { User } = require("../model/user");
 const bcrypt = require("bcrypt");
+const fs = require("fs");
+const path = require("path");
 const { sendJsonResponse } = require("../utils/helper");
+const { sanitizeUser } = require("../utils/isAuth");
+const jwt = require("jsonwebtoken");
+var privateKEY = fs.readFileSync(path.join(__dirname, "../assets/encryptionKeys/privateKey.key"), "utf8");
+// var publicKEY = fs.readFileSync(path.join(__dirname, "../assets/encryptionKeys/publicKey.key"), "utf8");
 
 const register = async (request, response) => {
 	const payload = request.body;
@@ -10,6 +16,7 @@ const register = async (request, response) => {
 	}
 
 	try {
+		// USER_FIELDS_UPDATE_BY_ADMIN_ONLY.forEach((key) => delete payload[key]);
 		const dbUser = await User.findOne({ email: payload?.email });
 
 		if (dbUser) {
@@ -36,6 +43,7 @@ const register = async (request, response) => {
 
 const login = async (request, response) => {
 	const { email, password, isAdminLogin } = request.body;
+
 	if (!email || !password) {
 		return sendJsonResponse(response, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!", null);
 	}
@@ -48,31 +56,22 @@ const login = async (request, response) => {
 				const isPasswordMatched = await bcrypt.compare(password, dbUser.password);
 
 				if (isPasswordMatched) {
-					// var token = jwt.sign(
-					// 	{
-					// 		username: dbUser.username,
-					// 		email: dbUser.email,
-					// 		userID: dbUser._id,
-					// 		userRole: dbUser.userRole,
-					// 		userStatus: dbUser.userStatus,
-					// 	},
-					// 	privateKEY,
-					// 	LOGIN_TOKEN_PREFERENCES
-					// );
-					const docs = {
-						id: dbUser.id,
-						email: dbUser.email,
-						role: dbUser.role,
-						name: dbUser.name,
-						addresses: dbUser.addresses,
-					};
+					var token = jwt.sign(
+						{
+							username: dbUser.name,
+							email: dbUser.email,
+							userID: dbUser._id,
+							userRole: dbUser.role,
+						},
+						privateKEY,
+						LOGIN_TOKEN_PREFERENCES
+					);
 
-					return sendJsonResponse(response, HTTP_STATUS_CODES.OK, true, "Login::success", docs);
-
-					// if (token) {
-					// } else {
-					// 	return sendJsonResponse(response, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR, false, "Login::failure", null);
-					// }
+					if (token) {
+						return sendJsonResponse(response, HTTP_STATUS_CODES.OK, true, "Login::success", { token: token });
+					} else {
+						return sendJsonResponse(response, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR, false, "Login::failure", null);
+					}
 				} else {
 					return sendJsonResponse(response, HTTP_STATUS_CODES.UNAUTHORIZED, false, "Invalid Password!", null);
 				}
@@ -91,11 +90,11 @@ const login = async (request, response) => {
 
 const getUser = async (request, response) => {
 	try {
-		const { user } = request.query;
-		if (!user) {
+		const { userID } = request?.jwtPayload;
+		if (!userID) {
 			return sendJsonResponse(response, HTTP_STATUS_CODES.UNAUTHORIZED, false, "Access denied!", null);
 		}
-		const dbUser = await User.findById(user);
+		const dbUser = await User.findById(userID);
 		const docs = {
 			id: dbUser.id,
 			email: dbUser.email,
@@ -113,16 +112,16 @@ const getUser = async (request, response) => {
 
 const updateUser = async (request, response) => {
 	try {
-		const { id } = request.body;
+		const { userID } = request.jwtPayload;
 
-		if (!id) {
+		if (!userID) {
 			return sendJsonResponse(response, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!", null);
 		}
 
-		const user = await User.findByIdAndUpdate(id, request.body, {
+		const user = await User.findByIdAndUpdate(userID, request.body, {
 			new: true,
 		});
-		const result = await User.findOne({ _id: id });
+		const result = await User.findOne({ _id: userID });
 
 		const docs = {
 			id: result.id,
@@ -145,6 +144,7 @@ module.exports = {
 	login,
 	updateUser,
 	getUser,
+
 	// getUserImage,
 	// updatePassword,
 	// sendUserVerificationEmail,

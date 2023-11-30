@@ -1631,3 +1631,20 @@ label.btn.btn-outline-danger.rounded-end-5.w-100::after {
 .modal-footer button {
 	color: white !important;
 }
+
+
+.delivered-status {
+	color: #08af5c;
+}
+.dispatch-status {
+	color: #0dcaf0;
+}
+.pending-status {
+	color: #6364db;
+}
+.cancel-status {
+	color: #d93d1e;
+}
+.hold-status {
+	color: #ffb422;
+}

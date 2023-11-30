@@ -13,23 +13,52 @@ const PlainDataTable = (props) => {
 	const [globalFilterValue, setGlobalFilterValue] = useState("");
 
 	useEffect(() => {
-		setTableData(props.data || []);
-	}, [props.data]);
+		setTableData(props?.data || []);
+	}, [props?.data]);
 
 	const onGlobalFilterChange = (e) => {
 		const value = e.target.value;
 		setGlobalFilterValue(value);
 	};
 
-	const renderColumnBody = (rowData, columnField) => {
-		const columnValue = rowData[columnField];
+	// const arr = [1, 4, 5, 6, 7];
+	// const newarr = arr.reduce((acc, curr) => {
+	// 	if (curr > acc) {
+	// 		acc = curr;
+	// 	}
+	// 	return acc;
+	// }, 0);
 
-		if (columnField === "featuredImage") {
+	// console.log(newarr);
+
+	const renderColumnBody = (rowData, columnField) => {
+		const columnValue = columnField.split(".").reduce((obj, key) => {
+			if (Array.isArray(obj)) {
+				// If the current object is an array, return the value of the specified index
+				return obj.map((item) => {
+					return item[key];
+				})[0];
+			} else {
+				// Otherwise, return the value of the key in the object
+				return obj && obj[key];
+			}
+		}, rowData);
+
+		if (columnField === "items.product.thumbnail") {
+			const columnValue = columnField.split(".").reduce((obj, key) => {
+				if (Array.isArray(obj)) {
+					return obj.map((item) => {
+						return item[key];
+					})[0];
+				} else {
+					return obj && obj[key];
+				}
+			}, rowData);
 			return (
 				<img
 					className=""
-					style={{ height: "70px" }}
-					src={`${import.meta.env.VITE_APP_API_URL}/v1${location.pathname}/image?filename=${columnValue}&width=500`}
+					style={{ objectFit: "cover", width: "100px", height: "70px" }}
+					src={columnValue}
 					alt="Image"
 					loading="lazy"
 				/>
@@ -44,29 +73,48 @@ const PlainDataTable = (props) => {
 			// Assuming "date" is the field for date columns
 			const date = new Date(columnValue);
 			return date.toLocaleString("en-US", { timeZone: "UTC" }); // Convert to localized format
+		} else {
+			return columnValue;
 		}
-
-		return columnValue;
 	};
 
 	const renderColumns = () => {
 		const columns = props.fieldsToShow.map((columnField) => {
-			if (columnField !== "_id") {
-				return (
-					<Column
-						key={columnField}
-						field={columnField}
-						header={columnField}
-						body={(e) => <div style={{ wordBreak: "break-word" }}>{renderColumnBody(e, columnField)}</div>}
-						sortable
-					/>
-				);
+			let bodyClassName = null;
+
+			if (columnField === "status") {
+				bodyClassName = (rowData) => {
+					const status = rowData[columnField];
+
+					switch (status) {
+						case "delivered":
+							return "delivered-status";
+						case "dispatch":
+							return "dispatch-status";
+						case "hold":
+							return "hold-status";
+						case "cancel":
+							return "cancel-status";
+						case "pending":
+							return "pending-status";
+						default:
+							return null;
+					}
+				};
 			}
 
-			return null;
+			return (
+				<Column
+					key={columnField}
+					field={columnField}
+					header={columnField}
+					body={(e) => <div style={{ wordBreak: "break-word" }}>{renderColumnBody(e, columnField)}</div>}
+					sortable
+					bodyClassName={bodyClassName} // Apply the bodyClassName for the "status" column
+				/>
+			);
 		});
 
-		// Add a custom column for the edit and delete icons
 		columns.push(
 			<Column
 				key="actions"

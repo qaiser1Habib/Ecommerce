@@ -33,7 +33,7 @@ const newPassword = ({funcShow}) => {
 
   useEffect(() => {
     funcShow(false);
-  }, []);
+  }, [funcShow]);
 
   const currentYear = new Date().getFullYear();
 

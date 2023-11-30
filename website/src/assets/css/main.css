@@ -13834,13 +13834,16 @@ div.tp-blog-thumb img {
 .profile__ticket table tbody > tr th[scope="row"] {
 	color: var(--tp-theme-primary);
 }
-.profile__ticket table tbody > tr td[data-info="status done"] {
+.profile__ticket table tbody > tr td[data-info="status delivered"] {
 	color: #08af5c;
+}
+.profile__ticket table tbody > tr td[data-info="status dispatch"] {
+	color: #0dcaf0;
 }
 .profile__ticket table tbody > tr td[data-info="status pending"] {
 	color: #6364db;
 }
-.profile__ticket table tbody > tr td[data-info="status reply"] {
+.profile__ticket table tbody > tr td[data-info="status cancel"] {
 	color: #d93d1e;
 }
 .profile__ticket table tbody > tr td[data-info="status hold"] {

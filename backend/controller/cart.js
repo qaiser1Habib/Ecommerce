@@ -2,16 +2,16 @@ const { Cart } = require("../model/cart");
 const { sendJsonResponse } = require("../utils/helper");
 
 const addToCart = async (request, response) => {
-	const payload = request.body;
-	const user = payload?.user;
-
-	if (!payload?.user || !payload?.product) {
-		return sendJsonResponse(response, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!", null);
-	}
-
-	const cart = new Cart({ ...payload, user: user });
-
 	try {
+		const payload = request.body;
+		const user = request.jwtPayload;
+
+		if (!payload?.product) {
+			return sendJsonResponse(response, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!", null);
+		}
+
+		const cart = new Cart({ ...payload, user: user.userID });
+
 		const doc = await cart.save();
 		const result = await Cart.populate(doc, { path: "product" });
 
@@ -24,12 +24,14 @@ const addToCart = async (request, response) => {
 };
 
 fetchCartByUser = async (request, response) => {
-	const payload = request.query;
-	if (!payload?.user) {
-		return sendJsonResponse(response, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!", null);
-	}
 	try {
-		const cartItems = await Cart.find({ user: payload.user }).populate({ path: "product" });
+		console.log(request.jwtPayload);
+		const { userID } = request?.jwtPayload;
+		if (!userID) {
+			return sendJsonResponse(response, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!", null);
+		}
+
+		const cartItems = await Cart.find({ user: userID }).populate({ path: "product" });
 		return sendJsonResponse(response, HTTP_STATUS_CODES.OK, true, "Get Cart::success", cartItems);
 	} catch (error) {
 		return sendJsonResponse(response, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR, false, "Error!", {
@@ -62,7 +64,6 @@ updateCartItem = async (request, response) => {
 removeFromCart = async (request, response) => {
 	try {
 		const { id } = request.query;
-		console.log(request.query);
 		if (!id) {
 			return sendJsonResponse(response, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!", null);
 		}

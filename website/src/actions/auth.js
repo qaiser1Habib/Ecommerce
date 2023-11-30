@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as api from "../middlewares/apis";
 import { apiErrorHandler } from "./apiErrorHandler";
+import { setToken } from "../middlewares/auth";
 
 export const registerUserAsync = createAsyncThunk("auth/registerUser", async ({ formData, notify }, { dispatch }) => {
 	try {
@@ -18,25 +19,22 @@ export const registerUserAsync = createAsyncThunk("auth/registerUser", async ({ 
 export const loginUser = createAsyncThunk("auth/loginUser", async ({ formData, notify }, { dispatch }) => {
 	try {
 		const { payload } = await api.loginUser(formData);
-		if (payload) {
-			// await setToken(payload.token);
+		if (payload.token) {
+			await setToken(payload.token);
 			notify("success", "Login successful");
-			return payload;
+			return true;
 		}
 	} catch (error) {
 		if (error?.message) notify("warning", error?.message ? error.message : "Invalid Login Credentials!");
 	}
 });
 
-export const signOut = createAsyncThunk("auth/signOut", async ({ formData, notify }, { dispatch }) => {
+export const signOut = createAsyncThunk("auth/signOut", async (notify, { dispatch }) => {
 	try {
-		// const { payload } = await api.loginUser(formData);
-		// if (payload) {
-		// 	// await setToken(payload.token);
-		// }
 		notify("success", "logout successful");
+		localStorage.clear();
 		return { payload: "successfully logout" };
 	} catch (error) {
-		if (error?.message) notify("warning", error?.message ? error.message : "Invalid Login Credentials!");
+		dispatch(apiErrorHandler(error, notify));
 	}
 });
