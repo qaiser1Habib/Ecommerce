@@ -2,11 +2,13 @@ const { User } = require("../model/user");
 const bcrypt = require("bcrypt");
 const fs = require("fs");
 const path = require("path");
-const { sendJsonResponse } = require("../utils/helper");
+const sharp = require("sharp");
+const { sendJsonResponse, convertImageToWebp, generateUniqueFileName } = require("../utils/helper");
 const { sanitizeUser } = require("../utils/isAuth");
 const jwt = require("jsonwebtoken");
 var privateKEY = fs.readFileSync(path.join(__dirname, "../assets/encryptionKeys/privateKey.key"), "utf8");
 // var publicKEY = fs.readFileSync(path.join(__dirname, "../assets/encryptionKeys/publicKey.key"), "utf8");
+const filePath = path.join(__dirname, "../assets/images/users");
 
 const register = async (request, response) => {
 	const payload = request.body;
@@ -101,6 +103,7 @@ const getUser = async (request, response) => {
 			role: dbUser.role,
 			name: dbUser.name,
 			addresses: dbUser.addresses,
+			profileImage: dbUser.profileImage,
 		};
 		return sendJsonResponse(response, HTTP_STATUS_CODES.OK, true, "Record Found", docs);
 	} catch (error) {
@@ -113,25 +116,65 @@ const getUser = async (request, response) => {
 const updateUser = async (request, response) => {
 	try {
 		const { userID } = request.jwtPayload;
-
+		const { password, ...payload } = request.body;
+		const files = request.files;
 		if (!userID) {
 			return sendJsonResponse(response, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!", null);
 		}
+		const dbUser = await User.findOne({ _id: userID });
 
-		const user = await User.findByIdAndUpdate(userID, request.body, {
-			new: true,
+		if (files.length) {
+			for (let file of files) {
+				const webpImage = await convertImageToWebp(file);
+				const generatedFileName = generateUniqueFileName(webpImage, filePath);
+
+				const fileFullPath = path.join(filePath, generatedFileName);
+				if (dbUser[webpImage.fieldname]) {
+					const existingFilePath = path.join(filePath, dbUser[webpImage.fieldname]);
+
+					const isThereExistingFile = fs.existsSync(existingFilePath);
+					if (isThereExistingFile) await fs.promises.unlink(existingFilePath);
+				}
+
+				await fs.promises.writeFile(fileFullPath, webpImage.buffer);
+
+				payload.profileImage = generatedFileName;
+			}
+		}
+
+		const updatedUser = await User.findOneAndUpdate({ _id: payload.id }, { ...payload }, { new: true }).select({
+			password: 0,
 		});
-		const result = await User.findOne({ _id: userID });
+		if (updatedUser) {
+			return sendJsonResponse(response, HTTP_STATUS_CODES.OK, true, "Record updated::success", updatedUser);
+		} else {
+			return sendJsonResponse(response, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR, false, "Record updated::failure", null);
+		}
+	} catch (error) {
+		return sendJsonResponse(response, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR, false, "Error!", {
+			error: error?.message || error,
+		});
+	}
+};
 
-		const docs = {
-			id: result.id,
-			email: result.email,
-			role: result.role,
-			name: result.name,
-			addresses: result.addresses,
-		};
+const getUserImage = async (request, response) => {
+	try {
+		const { filename, width } = request.query;
 
-		return sendJsonResponse(response, HTTP_STATUS_CODES.OK, true, "Record updated::success", docs);
+		if (!filename) {
+			return sendJsonResponse(response, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!", null);
+		}
+
+		const fileFullPath = path.join(filePath, filename);
+		const isFileExists = fs.existsSync(fileFullPath);
+		const sourceFile = fs.readFileSync(isFileExists ? fileFullPath : placeholderImage);
+		const optimizedImage = width ? await sharp(sourceFile).resize(parseInt(width)).toBuffer() : sourceFile;
+
+		response.writeHead(200, {
+			"Content-Type": "image/webp",
+		});
+
+		response.end(optimizedImage);
 	} catch (error) {
 		return sendJsonResponse(response, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR, false, "Error!", {
 			error: error?.message || error,
@@ -144,8 +187,7 @@ module.exports = {
 	login,
 	updateUser,
 	getUser,
-
-	// getUserImage,
+	getUserImage,
 	// updatePassword,
 	// sendUserVerificationEmail,
 	// verifyUserEmailByOTP,

@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as api from "../middlewares/apis";
 import { apiErrorHandler } from "./apiErrorHandler";
-import { setToken } from "../middlewares/auth";
+import { getToken, setToken } from "../middlewares/auth";
 
 export const registerUserAsync = createAsyncThunk("auth/registerUser", async ({ formData, notify }, { dispatch }) => {
 	try {
@@ -26,6 +26,15 @@ export const loginUser = createAsyncThunk("auth/loginUser", async ({ formData, n
 		}
 	} catch (error) {
 		if (error?.message) notify("warning", error?.message ? error.message : "Invalid Login Credentials!");
+	}
+});
+export const verifyUserLogin = createAsyncThunk("user/verifyLogin", async (notify, { dispatch }) => {
+	try {
+		const payload = getToken();
+
+		return payload ? true : false;
+	} catch (error) {
+		dispatch(apiErrorHandler(error, notify));
 	}
 });
 

@@ -11,10 +11,19 @@ const Logout = () => {
 	const { notify } = useToast();
 
 	useEffect(() => {
-		dispatch(signOut(notify));
-	}, []);
+		const handleSignOut = async () => {
+			try {
+				await dispatch(signOut(notify));
+				window.location.reload();
+			} catch (error) {
+				notify("error", "Failed to sign out. Please try again.");
+			}
+		};
 
-	return <>{!user && <Navigate to="/login" replace={true} />}</>;
+		handleSignOut();
+	}, [dispatch, notify]);
+
+	return <>{!user && <Navigate to="/" replace={true} />}</>;
 };
 
 export default Logout;

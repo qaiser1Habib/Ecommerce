@@ -1,6 +1,29 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUserAsync } from "../../../actions/user";
+import { useToast } from "../../../store/hooks/useToast";
+import { selectUserInfo } from "../../../store/redux/user";
 
 const UserProfile = (props) => {
+	const dispatch = useDispatch();
+	const { notify } = useToast();
+	const [userImage, setUserImage] = useState();
+	const [formData, setFormData] = useState({});
+	const user = useSelector(selectUserInfo);
+	const handleUploadMedia = (e) => {
+		const selectedFile = e.target.files[0];
+		if (selectedFile) {
+			const media = { filename: selectedFile, mimetype: selectedFile.type };
+			setUserImage(URL.createObjectURL(e.target.files[0]));
+			setFormData(media);
+		}
+	};
+
+	const handleUpdate = () => {
+		dispatch(updateUserAsync({ formData: { ...user, profileImage: [formData] }, notify }));
+	};
+
 	return (
 		<div className="tab-pane fade show active">
 			<div className="profile__main">
@@ -9,14 +32,34 @@ const UserProfile = (props) => {
 						<div className="col-md-6">
 							<div className="profile__main-inner d-flex flex-wrap align-items-center">
 								<div className="profile__main-thumb">
-									<img src="assets/img/users/user-10.jpg" alt="" />
+									{userImage ? (
+										<img src={userImage} loading="lazy" alt="User" />
+									) : (
+										<img
+											alt="UserProfile"
+											loading="lazy"
+											src={`${import.meta.env.VITE_APP_API_URL}/user/image?filename=${user?.profileImage}&width=500`}
+										/>
+									)}
 									<div className="profile__main-thumb-edit">
-										<input id="profile-thumb-input" className="profile-img-popup" type="file" />
+										<input
+											id="profile-thumb-input"
+											className="profile-img-popup"
+											type="file"
+											accept="image/x-png,image/jpeg"
+											onChange={handleUploadMedia}
+										/>
+
 										<label htmlFor="profile-thumb-input">
 											<i className="fa-light fa-camera" />
 										</label>
 									</div>
 								</div>
+								{userImage && (
+									<button onClick={handleUpdate} className="mt-5">
+										upload image
+									</button>
+								)}
 								<div className="profile__main-content">
 									<h4 className="profile__main-title">Welcome {props?.user?.name}!</h4>
 									<p>

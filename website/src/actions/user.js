@@ -29,7 +29,7 @@ export const updateUserAsync = createAsyncThunk("user/updateUser", async ({ form
 	try {
 		const { payload } = await api.updateUser(formData);
 		if (payload) {
-			// await setToken(payload.token);
+			notify("success", "Record updated::successfully");
 			return payload;
 		}
 	} catch (error) {

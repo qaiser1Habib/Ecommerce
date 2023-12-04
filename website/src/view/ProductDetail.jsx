@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { fetchProductByIdAsync } from "../actions/productSlice";
 import { selectProductDetail } from "../store/redux/products";
 import { useToast } from "../store/hooks/useToast";
 import { addToCartAsync } from "../actions/cart";
 import { selectItems } from "../store/redux/cart";
+import { userLoggedIn } from "../store/redux/auth";
 
 const ProductDetail = () => {
 	const dispatch = useDispatch();
@@ -14,6 +15,7 @@ const ProductDetail = () => {
 	const { notify } = useToast();
 	const [quantity, setQuantity] = useState(1);
 	const items = useSelector(selectItems);
+	const loggedIn = useSelector(userLoggedIn || false);
 
 	const productImages = product?.images || [];
 	const rating = product.rating;
@@ -25,11 +27,13 @@ const ProductDetail = () => {
 	});
 
 	const increaseQuantity = () => {
-		setQuantity(quantity + 1);
+		if (loggedIn) {
+			setQuantity(quantity + 1);
+		}
 	};
 
 	const decreaseQuantity = () => {
-		if (quantity > 0) {
+		if (quantity > 0 && loggedIn) {
 			setQuantity(quantity - 1);
 		}
 	};
@@ -42,6 +46,10 @@ const ProductDetail = () => {
 		} else {
 			notify("error", "Product Already in Cart.");
 		}
+	};
+
+	const handleNavigate = () => {
+		notify("warning", "Login first to access this feature.");
 	};
 
 	useEffect(() => {
@@ -137,19 +145,28 @@ const ProductDetail = () => {
 										<div className="tp-product-details-action-item-wrapper d-flex align-items-center">
 											<div className="tp-product-details-quantity">
 												<div className="tp-product-quantity mb-15 mr-15">
-													<span className="tp-cart-minus" onClick={decreaseQuantity}>
+													<a type="button" className="tp-cart-minus" onClick={decreaseQuantity}>
 														<i className="fa fa-minus" aria-hidden="true"></i>
-													</span>
+													</a>
 													<input className="tp-cart-input" type="text" value={quantity} readOnly />
-													<span className="tp-cart-plus" onClick={increaseQuantity}>
+													<a type="button" className="tp-cart-plus" onClick={increaseQuantity}>
 														<i className="fa fa-plus" aria-hidden="true"></i>
-													</span>
+													</a>
 												</div>
 											</div>
 											<div className="tp-product-details-add-to-cart mb-15 w-100">
-												<button onClick={() => handleCart()} className="tp-product-details-add-to-cart-btn w-100">
-													Add To Cart
-												</button>
+												{loggedIn ? (
+													<button onClick={() => handleCart()} className="tp-product-details-add-to-cart-btn w-100">
+														Add To Cart
+													</button>
+												) : (
+													<button
+														onClick={() => handleNavigate()}
+														className="tp-product-details-add-to-cart-btn w-100"
+													>
+														Add To Cart
+													</button>
+												)}
 											</div>
 										</div>
 									</div>

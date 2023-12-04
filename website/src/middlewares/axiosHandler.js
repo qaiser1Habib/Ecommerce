@@ -2,13 +2,12 @@ import axios from "axios";
 import { HTTP_STATUS_CODES } from "../utils/constants";
 
 const instance = axios.create({
-	baseURL: "http://localhost:3000",
+	baseURL: import.meta.env.VITE_APP_API_URL,
 	timeout: 300000,
 });
 
 instance.interceptors.response.use(
 	(response) => {
-		console.log(response)
 		// Check code within JSON body for actual status
 		if (response.data?.httpCode !== HTTP_STATUS_CODES?.OK && response.data?.httpCode !== HTTP_STATUS_CODES?.CREATED) {
 			// You can add more custom logic based on the code here

@@ -1,13 +1,14 @@
 import Header from "./view/partials/Header";
 import Footer from "./view/partials/Footer";
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route, Outlet, Navigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { userLoggedIn } from "./store/redux/auth";
 import { fetchCartByUserAsync } from "./actions/cart";
-import { useEffect, lazy, Suspense } from "react";
+import { useEffect, lazy, Suspense, useState } from "react";
 import { useToast } from "./store/hooks/useToast";
 import { loginUserAsync } from "./actions/user";
+import { verifyUserLogin } from "./actions/auth";
 
 const LazyComponents = {
 	Home: lazy(() => import("./view/Home")),
@@ -44,38 +45,63 @@ const LoadingComponent = (
 		</div>
 	</div>
 );
+const ProtectedRoute = ({ authStatus }) => {
+	return authStatus === true ? <Outlet /> : authStatus === false ? <Navigate to="/" /> : null;
+};
+
+const GuestRoute = ({ authStatus }) => {
+	return authStatus === true ? <Navigate to="/user" /> : authStatus === false ? <Outlet /> : null;
+};
+
 function App() {
-	const user = useSelector(userLoggedIn);
+	const location = useLocation();
+	const loggedIn = useSelector(userLoggedIn || false);
+	const [authStatus, setAuthStatus] = useState(false);
+
 	const dispatch = useDispatch();
 	const { notify } = useToast();
 
 	useEffect(() => {
-		dispatch(fetchCartByUserAsync({ formData: {}, notify }));
-		dispatch(loginUserAsync({ formData: {}, notify }));
-	}, [dispatch, user, notify]);
+		dispatch(verifyUserLogin(notify)).then(() => {
+			setAuthStatus(loggedIn && true);
+			if (loggedIn) dispatch(loginUserAsync(notify));
+		});
+		dispatch(fetchCartByUserAsync(notify));
+	}, [loggedIn]);
 
 	return (
 		<>
-			<Router>
+			{location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/forgotPassword" && (
 				<Header />
-				<Suspense fallback={LoadingComponent}>
-					<Routes>
-						<Route path="/" element={<LazyComponents.Home />} />
-						<Route path="/shop" element={<LazyComponents.Shop />} />
-						<Route path="/product-detail/:id" element={<LazyComponents.ProductDetail />} />
-						<Route path="/login" element={<LazyComponents.Login />} />
+			)}
+			<Suspense fallback={LoadingComponent}>
+				<Routes>
+					<Route path="/" element={<LazyComponents.Home />} />
+					<Route path="/shop" element={<LazyComponents.Shop />} />
+					<Route path="/product-detail/:id" element={<LazyComponents.ProductDetail />} />
+					<Route path="/logout" element={<LazyComponents.Logout />} />
+
+					{/* Guest routes for users not logged in */}
+					<Route path="/" element={<GuestRoute authStatus={authStatus} />}>
 						<Route path="/register" element={<LazyComponents.Register />} />
+						<Route path="/login" element={<LazyComponents.Login />} />
 						<Route path="/forgotPassword" element={<LazyComponents.ForgotPassword />} />
-						<Route path="/Cart" element={<LazyComponents.Cart />} />
-						<Route path="/checkout" element={<LazyComponents.Checkout />} />
+					</Route>
+
+					{/* Protected routes for logged in users */}
+					<Route path="/" element={<ProtectedRoute authStatus={authStatus} />}>
 						<Route path="/order-success" element={<LazyComponents.OrderSuccess />} />
 						<Route path="/user" element={<LazyComponents.UserDashboard />} />
-						<Route path="/logout" element={<LazyComponents.Logout />} />
-						<Route path="*" element={<LazyComponents.ErrorPage />} />
-					</Routes>
-				</Suspense>
+						<Route path="/checkout" element={<LazyComponents.Checkout />} />
+						<Route path="/Cart" element={<LazyComponents.Cart />} />
+					</Route>
+
+					<Route path="*" element={<LazyComponents.ErrorPage />} />
+				</Routes>
+			</Suspense>
+			{location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/forgotPassword" && (
 				<Footer />
-			</Router>
+			)}
 		</>
 	);
 }
