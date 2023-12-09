@@ -1,6 +1,6 @@
 .product-images-slider .swiper-slide {
 	padding-top: 100%;
-	overflow: hidden;
+	overflow: hidden !important;
 	position: relative;
 }
 .product-images-slider .swiper-slide img {

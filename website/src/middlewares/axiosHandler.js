@@ -8,6 +8,7 @@ const instance = axios.create({
 
 instance.interceptors.response.use(
 	(response) => {
+		// console.log(response)
 		// Check code within JSON body for actual status
 		if (response.data?.httpCode !== HTTP_STATUS_CODES?.OK && response.data?.httpCode !== HTTP_STATUS_CODES?.CREATED) {
 			// You can add more custom logic based on the code here

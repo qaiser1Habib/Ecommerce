@@ -14,14 +14,14 @@ const UserProfile = (props) => {
 	const handleUploadMedia = (e) => {
 		const selectedFile = e.target.files[0];
 		if (selectedFile) {
-			const media = { filename: selectedFile, mimetype: selectedFile.type };
 			setUserImage(URL.createObjectURL(e.target.files[0]));
-			setFormData(media);
+			setFormData({ ...formData, profileImage: e.target.files[0] });
 		}
 	};
 
 	const handleUpdate = () => {
-		dispatch(updateUserAsync({ formData: { ...user, profileImage: [formData] }, notify }));
+		console.log(formData)
+		dispatch(updateUserAsync({ formData: { ...user, ...formData }, notify }));
 	};
 
 	return (

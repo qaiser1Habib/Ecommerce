@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 const Dashboard = ({ funcShow }) => {
-	useEffect(() => {
-		funcShow(true);
-	}, []);
+
 
 	return (
 		<div className="fade-in">

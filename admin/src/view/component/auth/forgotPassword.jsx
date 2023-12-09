@@ -30,9 +30,7 @@ const ResetPassword = ({ funcShow }) => {
 		}, 1000);
 	};
 
-	useEffect(() => {
-		funcShow(false);
-	}, []);
+
 
 	const currentYear = new Date().getFullYear();
 	return (

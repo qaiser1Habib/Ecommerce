@@ -49,7 +49,7 @@ export const fetchAllProducts = (formData) => apiMethods.get("/products", formDa
 export const fetchProductById = (formData) => apiMethods.get("/products", formData);
 export const fetchCartByUser = (formData) => apiMethods.get("/cart", formData);
 
-export const registerUser = (formData) => apiMethods.post("/user/signup", formData, true);
+export const registerUser = (formData) => apiMethods.post("/user/signup", formData);
 export const loginUser = (formData) => apiMethods.post("/user", formData);
 export const getLoginUser = (formData) => apiMethods.get("/user", formData);
 export const updateUser = (formData) => apiMethods.patch("/user", formData, true);

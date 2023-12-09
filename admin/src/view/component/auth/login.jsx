@@ -1,43 +1,27 @@
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { loginUser } from "../../../actions/auth";
+import { useToast } from "../../../store/hook/useToast";
 
 const Login = ({ funcShow }) => {
-	const [showpass, SetShowpass] = useState(false);
+	const [showPass, SetShowPass] = useState(false);
+	const [spinner, SetSpinner] = useState("off");
+	const dispatch = useDispatch();
+	const { notify } = useToast();
 
 	const handleClick = () => {
-		SetShowpass(!showpass);
+		SetShowPass(!showPass);
 	};
 
-	const navigate = useNavigate();
-	const [userInput, setUserInput] = useState({
-		email: "",
-		password: "",
-	});
+	
 
-	const handleInput = (e) => {
-		const name = e.target.name;
-		const value = e.target.value;
-
-		setUserInput({
-			...userInput,
-			[name]: value,
-		});
-	};
-	const [spinner, SetSpinner] = useState("off");
-	const handleSubmit = (e) => {
-		e.preventDefault();
-
-		SetSpinner("on");
-
-		setTimeout(() => {
-			SetSpinner("off");
-			navigate("/admin-panel/dashboard");
-		}, 1000);
-	};
-
-	useEffect(() => {
-		funcShow(false);
-	}, []);
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm();
 
 	const currentYear = new Date().getFullYear();
 
@@ -60,7 +44,15 @@ const Login = ({ funcShow }) => {
 						</div>
 					</div>
 					<div className="py-20">
-						<form noValidate="novalidate" className="form w-100" onSubmit={handleSubmit}>
+						<form
+							noValidate="novalidate"
+							onSubmit={handleSubmit((data) => {
+								dispatch(
+									loginUser({ formData: { email: data.email, password: data.password, isAdminLogin: true }, notify })
+								);
+							})}
+							className="form w-100"
+						>
 							<div className="card-body">
 								<div className="text-start mb-10">
 									<h1 className="text-dark mb-3 fs-3x" data-kt-translate="sign-in-title">
@@ -74,25 +66,18 @@ const Login = ({ funcShow }) => {
 									<input
 										type="text"
 										placeholder="Email"
-										name="email"
-										autoComplete="off"
-										data-kt-translate="sign-in-input-email"
+										{...register("email", { required: "Email is required" })}
 										className="form-control form-control-solid"
-										value={userInput.email}
-										onChange={handleInput}
 									/>
+									{errors.email && <p className="text-danger ms-4 mt-2"> {errors?.email?.message}</p>}
 								</div>
 								<div className="fv-row mb-7">
 									<div className="position-relative mb-3">
 										<input
 											className="form-control form-control-solid"
-											type={showpass ? "text" : "password"}
+											type={showPass ? "text" : "password"}
 											placeholder="Password"
-											name="password"
-											autoComplete="off"
-											required=""
-											value={userInput.password}
-											onChange={handleInput}
+											{...register("password", { required: "Password is required" })}
 										/>
 										<span
 											className="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2"
@@ -101,9 +86,10 @@ const Login = ({ funcShow }) => {
 										>
 											<i
 												onClick={handleClick}
-												className={`toggle-password bi ${showpass ? "bi-eye" : "bi-eye-slash"} fs-2`}
+												className={`toggle-password bi ${showPass ? "bi-eye" : "bi-eye-slash"} fs-2`}
 											/>
 										</span>
+										{errors.password && <p className="text-danger ms-4 mt-2"> {errors?.password?.message}</p>}
 									</div>
 								</div>
 								<div className="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-10">
@@ -113,8 +99,8 @@ const Login = ({ funcShow }) => {
 									</Link>
 								</div>
 								<div className="d-flex flex-stack">
-									<Link
-										to="/"
+									<button
+										type="submit"
 										id="kt_sign_in_submit"
 										className="btn btn-success me-2 flex-shrink-0"
 										disabled={spinner === "on"}
@@ -127,7 +113,7 @@ const Login = ({ funcShow }) => {
 											<span data-kt-translate="general-progress">Please wait...</span>
 											<span className="spinner-border spinner-border-sm align-middle ms-2"></span>
 										</span>
-									</Link>
+									</button>
 								</div>
 							</div>
 						</form>
@@ -143,7 +129,10 @@ const Login = ({ funcShow }) => {
 					</div>
 				</div>
 			</div>
-			<div className="d-none d-lg-flex flex-lg-row-fluid w-50 bgi-size-cover bgi-position-y-center bgi-position-x-start bgi-no-repeat align-items-center justify-content-center" style={{background:"#E38853"}}>
+			<div
+				className="d-none d-lg-flex flex-lg-row-fluid w-50 bgi-size-cover bgi-position-y-center bgi-position-x-start bgi-no-repeat align-items-center justify-content-center"
+				style={{ background: "#E38853" }}
+			>
 				<div className="w-100 text-center d-flex align-items-center justify-content-center flex-column p-5 m-5">
 					<img className="img-fluid mt-5 rounded" src="/assets/basketball/banner.jpeg" alt="logo" />
 				</div>

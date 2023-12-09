@@ -27,6 +27,5 @@ export const useToast = () => {
 		});
 	};
 
-
 	return { notify };
 };

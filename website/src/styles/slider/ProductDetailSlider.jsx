@@ -1,5 +1,5 @@
 import "../../assets/css/product-image-slider.css";
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs } from "swiper/modules";
 import { useState } from "react";
@@ -15,12 +15,12 @@ const ProductImagesSlider = (props) => {
 				navigation={true}
 				modules={[Navigation, Thumbs]}
 				grabCursor={true}
-				thumbs={{ swiper: activeThumb }}
-				className="product-images-slider mb-2"
+				thumbs={{ swiper: activeThumb && !activeThumb.destroyed ? activeThumb : null }}
+				className="product-images-slider"
 			>
 				{props.images.map((item, index) => (
 					<SwiperSlide key={index}>
-						<img src={item} alt="product images" />
+						<img className="img-fluid" src={item} alt="product images" />
 					</SwiperSlide>
 				))}
 			</Swiper>
@@ -35,7 +35,7 @@ const ProductImagesSlider = (props) => {
 				{props.images.map((item, index) => (
 					<SwiperSlide key={index}>
 						<div className="product-images-slider-thumbs-wrapper">
-							<img src={item} alt="product images" />
+							<img className="img-fluid" src={item} alt="product images" />
 						</div>
 					</SwiperSlide>
 				))}

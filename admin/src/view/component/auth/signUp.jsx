@@ -1,25 +1,25 @@
 import { useState, useEffect } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { useToast } from "../../../store/hook/useToast";
+import { registerUserAsync } from "../../../actions/auth";
 
 const SignUp = ({ funcShow }) => {
 	const [spinner, SetSpinner] = useState("off");
+	const [showPass, SetShowPass] = useState(false);
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm();
 
-		SetSpinner("on");
+	const dispatch = useDispatch();
+	const { notify } = useToast();
 
-		setTimeout(() => {
-			SetSpinner("off");
-			Navigate("/");
-		}, 1000);
-	};
 
-	useEffect(() => {
-		funcShow(false);
-	}, []);
 	const currentYear = new Date().getFullYear();
-
 	return (
 		<div className="d-flex flex-column flex-root" id="kt_app_root">
 			<div className="d-flex flex-column flex-lg-row flex-column-fluid">
@@ -46,7 +46,19 @@ const SignUp = ({ funcShow }) => {
 						</div>
 
 						<div className="py-20">
-							<form className="form w-100" noValidate="novalidate" id="kt_sign_up_form" onSubmit={handleSubmit}>
+							<form
+								className="form w-100"
+								noValidate="novalidate"
+								id="kt_sign_up_form"
+								onSubmit={handleSubmit((data) => {
+									dispatch(
+										registerUserAsync({
+											formData: { email: data.email, password: data.password, name: data.name, role: "admin" },
+											notify,
+										})
+									);
+								})}
+							>
 								<div className="text-start mb-10">
 									<h1 className="text-dark mb-3 fs-3x" data-kt-translate="sign-up-title">
 										Create an Account
@@ -62,34 +74,28 @@ const SignUp = ({ funcShow }) => {
 										<input
 											className="form-control form-control-lg form-control-solid"
 											type="text"
-											placeholder="First Name"
-											name="first-name"
-											autoComplete="off"
-											data-kt-translate="sign-up-input-first-name"
+											placeholder="user name"
+											{...register("name", {
+												required: "Name is required",
+											})}
 										/>
+										{errors.name && <p className="text-danger ms-4 mt-2"> {errors?.name?.message}</p>}
 									</div>
-
-									<div className="col-xl-6">
+									<div className="col-xl-6 mb-5">
 										<input
 											className="form-control form-control-lg form-control-solid"
-											type="text"
-											placeholder="Last Name"
-											name="last-name"
-											autoComplete="off"
-											data-kt-translate="sign-up-input-last-name"
+											type="email"
+											placeholder="Email"
+											{...register("email", {
+												required: "Email is required",
+												pattern: {
+													value: /\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/gi,
+													message: "Email is not valid",
+												},
+											})}
 										/>
+										{errors.email && <p className="text-danger ms-4 mt-2"> {errors?.email?.message}</p>}
 									</div>
-								</div>
-
-								<div className="fv-row mb-10">
-									<input
-										className="form-control form-control-lg form-control-solid"
-										type="email"
-										placeholder="Email"
-										name="email"
-										autoComplete="off"
-										data-kt-translate="sign-up-input-email"
-									/>
 								</div>
 
 								<div className="fv-row mb-10" data-kt-password-meter="true">
@@ -97,18 +103,28 @@ const SignUp = ({ funcShow }) => {
 										<div className="position-relative mb-3">
 											<input
 												className="form-control form-control-lg form-control-solid"
-												type="password"
+												type={showPass ? "text" : "password"}
 												placeholder="Password"
-												name="password"
-												autoComplete="off"
-												data-kt-translate="sign-up-input-password"
+												{...register("password", {
+													required: "Password is required",
+													pattern: {
+														value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{4,}$/gm,
+														message: `- at least 4 characters
+											- must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number\n
+											- Can contain special characters`,
+													},
+												})}
 											/>
+											{errors.password && <p className="text-danger ms-4 mt-2"> {errors?.password?.message}</p>}
+
 											<span
 												className="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2"
 												data-kt-password-meter-control="visibility"
 											>
-												<i className="ki-duotone ki-eye-slash fs-2" />
-												<i className="ki-duotone ki-eye fs-2 d-none" />
+												<i
+													onClick={() => SetShowPass(!showPass)}
+													className={`toggle-password bi ${showPass ? "bi-eye" : "bi-eye-slash"} fs-2`}
+												/>
 											</span>
 										</div>
 									</div>
@@ -117,12 +133,16 @@ const SignUp = ({ funcShow }) => {
 								<div className="fv-row mb-10">
 									<input
 										className="form-control form-control-lg form-control-solid"
-										type="password"
+										type={showPass ? "text" : "password"}
 										placeholder="Confirm Password"
-										name="confirm-password"
-										autoComplete="off"
-										data-kt-translate="sign-up-input-confirm-password"
+										{...register("confirmPassword", {
+											required: "Confirm password is required",
+											validate: (value, formValues) => value === formValues.password || "Password must be same",
+										})}
 									/>
+									{errors.confirmPassword && (
+										<p className="text-danger ms-4 mt-2"> {errors?.confirmPassword?.message}</p>
+									)}
 								</div>
 
 								<div className="d-flex flex-stack">

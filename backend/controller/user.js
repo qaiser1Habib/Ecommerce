@@ -4,7 +4,6 @@ const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
 const { sendJsonResponse, convertImageToWebp, generateUniqueFileName } = require("../utils/helper");
-const { sanitizeUser } = require("../utils/isAuth");
 const jwt = require("jsonwebtoken");
 var privateKEY = fs.readFileSync(path.join(__dirname, "../assets/encryptionKeys/privateKey.key"), "utf8");
 // var publicKEY = fs.readFileSync(path.join(__dirname, "../assets/encryptionKeys/publicKey.key"), "utf8");
@@ -54,7 +53,7 @@ const login = async (request, response) => {
 		const dbUser = await User.findOne({ email: email });
 
 		if (dbUser) {
-			if ((isAdminLogin && dbUser?.userRole === "admin") || (!isAdminLogin && dbUser?.userRole !== "admin")) {
+			if ((isAdminLogin && dbUser?.role === "admin") || (!isAdminLogin && dbUser?.role !== "admin")) {
 				const isPasswordMatched = await bcrypt.compare(password, dbUser.password);
 
 				if (isPasswordMatched) {
@@ -127,7 +126,6 @@ const updateUser = async (request, response) => {
 			for (let file of files) {
 				const webpImage = await convertImageToWebp(file);
 				const generatedFileName = generateUniqueFileName(webpImage, filePath);
-
 				const fileFullPath = path.join(filePath, generatedFileName);
 				if (dbUser[webpImage.fieldname]) {
 					const existingFilePath = path.join(filePath, dbUser[webpImage.fieldname]);

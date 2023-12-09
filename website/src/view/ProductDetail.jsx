@@ -7,6 +7,7 @@ import { useToast } from "../store/hooks/useToast";
 import { addToCartAsync } from "../actions/cart";
 import { selectItems } from "../store/redux/cart";
 import { userLoggedIn } from "../store/redux/auth";
+import ProductDetailSlider from "../styles/slider/ProductDetailSlider";
 
 const ProductDetail = () => {
 	const dispatch = useDispatch();
@@ -65,7 +66,7 @@ const ProductDetail = () => {
 					<div className="row justify-content-center  mt-5">
 						<div className="row">
 							<div className="col-xl-7 col-lg-6">
-								<div className="tp-product-details-thumb-wrapper tp-tab d-sm-flex border">
+								{/* <div className="tp-product-details-thumb-wrapper tp-tab d-sm-flex border">
 									<nav>
 										{productImages.map((item, index) => (
 											<div
@@ -111,7 +112,8 @@ const ProductDetail = () => {
 											);
 										})}
 									</div>
-								</div>
+								</div> */}
+								<ProductDetailSlider images={productImages} />
 							</div>
 							<div className="col-xl-5 col-lg-6">
 								<div className="tp-product-details-wrapper">

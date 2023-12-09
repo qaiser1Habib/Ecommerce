@@ -92,11 +92,11 @@ const Header = () => {
 															<img
 																alt="UserProfile"
 																loading="lazy"
-																className="img-fluid"
+																className="w-100 h-100"
 																src={`${import.meta.env.VITE_APP_API_URL}/user/image?filename=${
 																	user?.profileImage
 																}&width=500`}
-																style={{ borderRadius: "50%" }}
+																style={{ borderRadius: "50%", objectFit:"cover" }}
 															/>
 														</span>
 													) : (
