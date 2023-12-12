@@ -18,7 +18,6 @@ const ProductDetail = () => {
 	const items = useSelector(selectItems);
 	const loggedIn = useSelector(userLoggedIn || false);
 
-	const productImages = product?.images || [];
 	const rating = product.rating;
 
 	const stars = Array.from({ length: 5 }, (_, index) => {
@@ -40,8 +39,6 @@ const ProductDetail = () => {
 	};
 
 	const handleCart = () => {
-		// const findItem = ;
-
 		if (items.findIndex((item) => item.product.id === product.id) < 0) {
 			dispatch(addToCartAsync({ formData: { product: product.id, quantity: quantity }, notify }));
 		} else {
@@ -59,62 +56,15 @@ const ProductDetail = () => {
 		}
 	}, [dispatch, params.id]);
 
+	console.log(product);
+
 	return (
 		<section className="tp-product-details-area">
-			<div className="tp-product-details-top pb-115">
+			<div className="tp-product-details-top pt-70 pb-115">
 				<div className="container">
-					<div className="row justify-content-center  mt-5">
+					<div className="row justify-content-center">
 						<div className="row">
-							<div className="col-xl-7 col-lg-6">
-								{/* <div className="tp-product-details-thumb-wrapper tp-tab d-sm-flex border">
-									<nav>
-										{productImages.map((item, index) => (
-											<div
-												key={index}
-												className="nav nav-tabs flex-sm-column mb-2"
-												id="productDetailsNavThumb"
-												role="tablist"
-											>
-												<button
-													className="nav-link"
-													id={`nav-${index + 1}-tab`}
-													data-bs-toggle="tab"
-													data-bs-target={`#nav-${index + 1}`}
-													type="button"
-													role="tab"
-													aria-controls={`nav-${index + 1}`}
-													aria-selected={false}
-												>
-													<img src={item} className="img-fluid" alt="" />
-												</button>
-											</div>
-										))}
-									</nav>
-									<div
-										className="tab-content m-img w-100 border text-center"
-										id="productDetailsNavContent"
-										style={{ background: "#F3F5F6", minHeight: "600px" }}
-									>
-										{productImages.map((item, index) => {
-											return (
-												<div
-													key={index}
-													className={`tab-pane fade pt-5 w-100 ${index === 0 ? "active show" : ""}`}
-													id={`nav-${index + 1}`}
-													role="tabpanel"
-													aria-labelledby={`nav-${index + 1}-tab`}
-													tabIndex={index === 0 ? 0 : -1}
-												>
-													<div className="tp-product-details-nav-main-thumb">
-														<img src={item} className="w-100 h-100" style={{ objectFit: "contain" }} alt="" />
-													</div>
-												</div>
-											);
-										})}
-									</div>
-								</div> */}
-								<ProductDetailSlider images={productImages} />
-							</div>
+							<div className="col-xl-7 col-lg-6">{product?.media && <ProductDetailSlider images={product?.media} />}</div>
 							<div className="col-xl-5 col-lg-6">
 								<div className="tp-product-details-wrapper">
 									<div className="tp-product-details-category">

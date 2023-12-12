@@ -46,6 +46,8 @@ const apiMethods = {
 };
 
 export const fetchAllProducts = (formData) => apiMethods.get("/products", formData);
+export const getCategories = () => apiMethods.get("/category");
+export const getBrands = () => apiMethods.get("/brand");
 export const fetchProductById = (formData) => apiMethods.get("/products", formData);
 export const fetchCartByUser = (formData) => apiMethods.get("/cart", formData);
 

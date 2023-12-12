@@ -6,46 +6,22 @@ import { fetchAllProductsAsync } from "../../../actions/productSlice";
 import { selectAllProducts, selectTotalItems } from "../../../store/redux/products";
 import { useToast } from "../../../store/hooks/useToast";
 import { Link } from "react-router-dom";
+import { getCategoriesAsync } from "../../../actions/categories";
+import { selectCategories } from "../../../store/redux/categories";
+import { getBrandsAsync } from "../../../actions/brands";
+import { selectBrands } from "../../../store/redux/brand";
 
 const ProductList = () => {
 	const [page, setPage] = useState(1);
 	const [filters, setFilters] = useState({});
 	const dispatch = useDispatch();
 	const products = useSelector(selectAllProducts);
+	const categories = useSelector(selectCategories);
+	const brands = useSelector(selectBrands);
 	const totalItems = useSelector(selectTotalItems);
 	const { notify } = useToast();
 
 	const limit = 12;
-	const categories = ["smartphones", "laptops", "fragrances", "skincare", "groceries", "home-decoration"];
-	const brands = [
-		"Apple",
-		"Samsung",
-		"OPPO",
-		"Huawei",
-		"Microsoft Surface",
-		"Infinix",
-		"HP Pavilion",
-		"Impression of Acqua Di Gio",
-		"Royal_Mirage",
-		"Fog Scent Xpressio",
-		"Al Munakh",
-		"Lord - Al-Rehab",
-		"L'Oreal Paris",
-		"Hemani Tea",
-		"Dermive",
-		"ROREC White Rice",
-		"Fair & Clear",
-		"Saaf & Khaas",
-		"Bake Parlor Big",
-		"Baking Food Items",
-		"fauji",
-		"Dry Rose",
-		"Boho Decor",
-		"Flying Wooden",
-		"LED Lights",
-		"luxury palace",
-		"Golden",
-	];
 
 	const sortFilterDropdown = [
 		{ name: "Best Rating", sort: "Rating", order: "desc" },
@@ -58,16 +34,30 @@ const ProductList = () => {
 		setFilters(newFormData);
 		dispatch(fetchAllProductsAsync({ formData: { page, limit, ...newFormData }, notify }));
 	};
-	const handleFilter = (e, section) => {
-		const newFormData = { ...filters, [section]: e.target.value };
+	const handleFilter = (e, section, option) => {
+		const newFormData = { ...filters };
+		if (e.target.checked) {
+			if (newFormData[section]) {
+				newFormData[section].push(option);
+			} else {
+				newFormData[section] = [option];
+			}
+		} else {
+			const index = newFormData[section].findIndex((el) => el === option.value);
+			newFormData[section].splice(index, 1);
+		}
 		setFilters(newFormData);
 		dispatch(fetchAllProductsAsync({ formData: { page, limit, ...newFormData }, notify }));
 	};
+	console.log(filters)
+
 	const handlePage = (page) => {
 		setPage(page);
 	};
 	useEffect(() => {
 		dispatch(fetchAllProductsAsync({ formData: { page: page, limit: limit }, notify }));
+		dispatch(getCategoriesAsync(notify));
+		dispatch(getBrandsAsync(notify));
 	}, [dispatch, page]);
 
 	return (
@@ -92,27 +82,26 @@ const ProductList = () => {
 													<label htmlFor="in_stock">In Stock</label>
 												</li>
 											</ul>
-											{/* .filter-items */}
 										</div>
 									</div>
 								</div>
-								{/* categories */}
+
 								<div className="tp-shop-widget mb-20">
 									<h3 className="tp-shop-widget-title">Category</h3>
 									<div className="tp-shop-widget-content">
 										<div className="tp-shop-widget-checkbox tp-shop-widget-categories">
 											<ul className="filter-items filter-checkbox ">
-												{[...categories].map((category, index) => {
+												{categories.map((category, index) => {
 													return (
 														<li key={index} className="filter-item checkbox">
 															<input
-																id={`${category}${index}`}
-																name={`${category}`}
-																defaultValue={`${category}`}
+																id={`${category.id}`}
+																name={`${category.label}`}
+																defaultValue={`${category.label}`}
 																type="checkbox"
-																onClick={(e) => handleFilter(e, "category")}
+																onClick={(e) => handleFilter(e, "category", category.label)}
 															/>
-															<label htmlFor={`${category}${index}`}>{category}</label>
+															<label htmlFor={`${category.id}`}>{category.label}</label>
 														</li>
 													);
 												})}
@@ -126,17 +115,17 @@ const ProductList = () => {
 									<div className="tp-shop-widget-content">
 										<div className="tp-shop-widget-checkbox tp-shop-widget-categories">
 											<ul className="filter-items filter-checkbox ">
-												{[...brands].map((brand, index) => {
+												{brands.map((brand, index) => {
 													return (
 														<li key={index} className="filter-item checkbox">
 															<input
-																id={`${brand}${index}`}
-																name={`${brand}`}
-																defaultValue={`${brand}`}
+																id={`${brand.id}`}
+																name={`${brand.label}`}
+																defaultValue={`${brand.label}`}
 																type="checkbox"
-																onClick={(e) => handleFilter(e, "brand")}
+																onClick={(e) => handleFilter(e, "brand", brand.label)}
 															/>
-															<label htmlFor={`${brand}${index}`}>{brand}</label>
+															<label htmlFor={`${brand.id}`}>{brand.label}</label>
 														</li>
 													);
 												})}
@@ -294,9 +283,11 @@ const ProductList = () => {
 																<div className="tp-product-thumb-2 p-relative z-index-1 fix w-img">
 																	<Link to={`/product-detail/${product.id}`}>
 																		<img
-																			src={product.thumbnail}
+																			src={`${import.meta.env.VITE_APP_API_URL}/products/media?filename=${
+																				product.media[0]?.filename
+																			}&mimetype=${product.media[0]?.mimetype}&width=500`}
 																			className="w-100"
-																			alt="product-electronic"
+																			alt="product-image"
 																			style={{ height: "250px", objectFit: "cover" }}
 																		/>
 																	</Link>

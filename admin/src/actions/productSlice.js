@@ -25,28 +25,34 @@ export const fetchProductByIdAsync = createAsyncThunk("product/fetchProductById"
 		dispatch(apiErrorHandler(error, notify));
 	}
 });
-export const createProductAsync = createAsyncThunk("product/createProduct", async ({ formData, notify }, { dispatch }) => {
-	try {
-		const { payload } = await api.createProduct(formData);
-		notify("success", "Product successfully Added.");
-		if (payload) {
-			return payload;
+export const createProductAsync = createAsyncThunk(
+	"product/createProduct",
+	async ({ formData, notify, uploadProgress }, { dispatch }) => {
+		try {
+			const { payload } = await api.createProduct(formData, uploadProgress);
+			if (payload) {
+				notify("success", "Product successfully Added.");
+				return payload;
+			}
+		} catch (error) {
+			dispatch(apiErrorHandler(error, notify));
 		}
-	} catch (error) {
-		dispatch(apiErrorHandler(error, notify));
 	}
-});
-export const updateProductAsync = createAsyncThunk("product/updateProduct", async ({ formData, notify }, { dispatch }) => {
-	try {
-		const { payload } = await api.updateProduct(formData);
-		notify("success", "Product successfully Updated.");
-		if (payload) {
-			return payload;
+);
+export const updateProductAsync = createAsyncThunk(
+	"product/updateProduct",
+	async ({ formData, notify, uploadProgress }, { dispatch }) => {
+		try {
+			const { payload } = await api.updateProduct(formData, uploadProgress);
+			notify("success", "Product successfully Updated.");
+			if (payload) {
+				return payload;
+			}
+		} catch (error) {
+			dispatch(apiErrorHandler(error, notify));
 		}
-	} catch (error) {
-		dispatch(apiErrorHandler(error, notify));
 	}
-});
+);
 export const deleteProductAsync = createAsyncThunk("product/deleteProduct", async ({ formData, notify }, { dispatch }) => {
 	try {
 		const { payload } = await api.deleteProduct(formData);

@@ -45,9 +45,12 @@ const apiMethods = {
 
 export const fetchAllProducts = (formData) => apiMethods.get("/products", formData);
 export const fetchProductById = (formData) => apiMethods.get("/products", formData);
+export const createProduct = (formData, uploadProgress) => apiMethods.post("/products", formData, true, uploadProgress);
+export const updateProduct = (formData, uploadProgress) => apiMethods.patch("/products", formData, true, uploadProgress);
+export const deleteProduct = (formData) => apiMethods.patch("/products", formData);
 export const fetchCartByUser = (formData) => apiMethods.get("/cart", formData);
 
-export const registerUser = (formData) => apiMethods.post("/user/signup", formData);
+export const registerUser = (formData) => apiMethods.post("/user/signup", formData, true);
 export const loginUser = (formData) => apiMethods.post("/user", formData);
 export const getLoginUser = (formData) => apiMethods.get("/user", formData);
 export const updateUser = (formData) => apiMethods.patch("/user", formData);
@@ -56,8 +59,6 @@ export const removeFromCart = (formData) => apiMethods.delete("/cart", formData)
 export const updateCartItem = (formData) => apiMethods.patch("/cart", formData);
 
 export const createOrder = (formData) => apiMethods.post("/order", formData);
-export const loginUserOrder = (formData) => apiMethods.get("/order/own", formData);
 export const fetchAllOrders = (formData) => apiMethods.get("/order", formData);
 export const orderUpdate = (formData) => apiMethods.patch("/order", formData);
-
-export const updateProduct = (formData) => apiMethods.patch("/products", formData);
+export const loginUserOrder = (formData) => apiMethods.get("/order/own", formData);

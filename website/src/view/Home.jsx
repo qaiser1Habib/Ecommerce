@@ -36,13 +36,15 @@ const Home = () => {
 			<section className="tp-product-area pb-55">
 				<div className="container">
 					<Products products={products} />
-					<Pagination
-						totalItems={totalItems}
-						limit={limit}
-						page={page}
-						setPage={setPage}
-						handlePage={handlePage}
-					></Pagination>
+					{products.length > 0 && (
+						<Pagination
+							totalItems={totalItems}
+							limit={limit}
+							page={page}
+							setPage={setPage}
+							handlePage={handlePage}
+						></Pagination>
+					)}
 				</div>
 			</section>
 		</>

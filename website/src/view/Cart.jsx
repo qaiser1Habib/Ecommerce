@@ -46,17 +46,22 @@ const Cart = () => {
 										</tr>
 									</thead>
 									<tbody>
-										{items &&
+										{items !== null &&
 											items.map((item, index) => (
 												<tr key={index}>
 													<td className="tp-cart-img">
-														<Link to={`/product-detail/${item.product.id}`}>
-															<img src={item.product.thumbnail} alt="" />
+														<Link to={`/product-detail/${item.product?.id}`}>
+															<img
+																src={`${import.meta.env.VITE_APP_API_URL}/products/media?filename=${
+																	item?.product.media[0].filename
+																}&mimetype=${item?.product.media[0].mimetype}&width=500`}
+																alt="product-image"
+															/>
 														</Link>
 													</td>
 
 													<td className="tp-cart-title">
-														<Link to={`/product-detail/${item.product.id}`}>{item.product.title}</Link>
+														<Link to={`/product-detail/${item.product?.id}`}>{item.product?.title}</Link>
 													</td>
 
 													<td className="tp-cart-price">
@@ -195,9 +200,11 @@ const Cart = () => {
 									<span>${totalPrice}</span>
 								</div>
 								<div className="tp-cart-checkout-proceed">
-									<Link to="/checkout" className="tp-cart-checkout-btn w-100">
-										Proceed to Checkout
-									</Link>
+									{items.length > 0 && (
+										<Link to="/checkout" className="tp-cart-checkout-btn w-100">
+											Proceed to Checkout
+										</Link>
+									)}
 								</div>
 							</div>
 						</div>

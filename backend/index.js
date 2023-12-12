@@ -4,13 +4,13 @@ const productsRouter = require("./routes/product.js");
 const userRouter = require("./routes/user.js");
 const cartRouter = require("./routes/cart.js");
 const orderRouter = require("./routes/order.js");
+const categoryRouter = require("./routes/category.js");
+const brandRouter = require("./routes/brand.js");
 require("./utils/constants.js");
 const cors = require("cors");
 
 const app = express();
 const port = 3000;
-
-
 
 //middlewares
 app.use(express.json());
@@ -21,6 +21,8 @@ app.use(
 );
 
 app.use("/products", productsRouter.router);
+app.use("/category", categoryRouter.router);
+app.use("/brand", brandRouter.router);
 app.use("/user", userRouter.router);
 app.use("/cart", cartRouter.router);
 app.use("/order", orderRouter.router);
