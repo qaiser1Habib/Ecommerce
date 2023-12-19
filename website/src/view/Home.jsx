@@ -23,6 +23,8 @@ const Home = () => {
 		dispatch(fetchAllProductsAsync({ formData: { page: page, limit: limit }, notify }));
 	}, [dispatch, page]);
 
+	
+
 	return (
 		<>
 			<section className="tp-slider-area p-relative z-index-1">

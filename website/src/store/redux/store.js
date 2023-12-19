@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import productReducer from "./products";
 import authReducer from "./auth";
 import cartReducer from "./cart";
+import wishlistReducer from "./wishlist";
 import orderReducer from "./order";
 import userReducer from "./user";
 import categoriesReducer from "./categories";
@@ -16,5 +17,6 @@ export const store = configureStore({
 		user: userReducer,
 		category: categoriesReducer,
 		brand: brandReducer,
+		wishlist: wishlistReducer,
 	},
 });

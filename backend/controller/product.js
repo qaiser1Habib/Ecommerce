@@ -60,7 +60,7 @@ exports.createProduct = async (request, response) => {
 };
 
 exports.fetchAllProduct = async (req, res) => {
-	const { id, page, limit, category, brand, sort, order } = req.query;
+	const { id, page, limit, category, brand, sort, order, search } = req.query;
 
 	if (!id && (!page || !limit)) {
 		return sendJsonResponse(res, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!");
@@ -76,6 +76,11 @@ exports.fetchAllProduct = async (req, res) => {
 		query = query.where("brand").equals(brand);
 	}
 
+	if (search) {
+		query = query.where({
+			$or: [{ title: { $regex: search, $options: "i" } }, { brand: { $regex: search, $options: "i" } }],
+		});
+	}
 	if (sort && order) {
 		query = query.sort({ [sort]: order });
 	}
@@ -128,7 +133,6 @@ exports.getProductImage = async (request, response) => {
 		});
 	}
 };
-
 
 exports.updateProduct = async (request, response) => {
 	let media = [];
@@ -203,7 +207,6 @@ exports.updateProduct = async (request, response) => {
 		});
 	}
 };
-
 
 exports.deleteProduct = async (request, response) => {
 	try {

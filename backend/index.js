@@ -6,13 +6,17 @@ const cartRouter = require("./routes/cart.js");
 const orderRouter = require("./routes/order.js");
 const categoryRouter = require("./routes/category.js");
 const brandRouter = require("./routes/brand.js");
+const whishListRouter = require("./routes/wishlist.js");
+const paymentRouter = require("./routes/payment.js");
+require("dotenv").config();
 require("./utils/constants.js");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
-const port = 3000;
 
 //middlewares
+app.use(express.static(path.resolve(__dirname, "build")));
 app.use(express.json());
 app.use(
 	cors({
@@ -25,15 +29,16 @@ app.use("/category", categoryRouter.router);
 app.use("/brand", brandRouter.router);
 app.use("/user", userRouter.router);
 app.use("/cart", cartRouter.router);
+app.use("/wishlist", whishListRouter.router);
 app.use("/order", orderRouter.router);
+// app.use("/payments", paymentRouter.router);
 
 main().catch((err) => console.log(err));
 
 async function main() {
-	await mongoose.connect("mongodb://127.0.0.1:27017/ecommerce");
+	await mongoose.connect(process.env.MONGO_DB_CONNECTION_URL);
 	console.log("database connected");
 }
-
-app.listen(port, () => {
-	console.log(`Example app listening on port ${port}`);
+app.listen(process.env.PORT || 3000, () => {
+	console.log(`Example app listening on port ${process.env.PORT}`);
 });

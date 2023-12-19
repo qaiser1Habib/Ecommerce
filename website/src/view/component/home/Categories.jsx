@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Categories = () => {
 	return (
 		<div className="container">
@@ -5,13 +7,13 @@ const Categories = () => {
 				<div className="col">
 					<div className="tp-product-category-item text-center mb-40">
 						<div className="tp-product-category-thumb fix">
-							<a href="shop-category.html">
+							<Link to="/shop">
 								<img src="assets/img/product/category/product-cat-1.png" alt="product-category" />
-							</a>
+							</Link>
 						</div>
 						<div className="tp-product-category-content">
 							<h3 className="tp-product-category-title">
-								<a href="shop-category.html">Headphones</a>
+								<a to="/shop">Headphones</a>
 							</h3>
 							<p>20 Product</p>
 						</div>
@@ -20,13 +22,13 @@ const Categories = () => {
 				<div className="col">
 					<div className="tp-product-category-item text-center mb-40">
 						<div className="tp-product-category-thumb fix">
-							<a href="shop-category.html">
+							<Link to="/shop">
 								<img src="assets/img/product/category/product-cat-2.png" alt="product-category" />
-							</a>
+							</Link>
 						</div>
 						<div className="tp-product-category-content">
 							<h3 className="tp-product-category-title">
-								<a href="shop-category.html">Mobile Phone</a>
+								<Link to="/shop">Mobile Phone</Link>
 							</h3>
 							<p>25 Product</p>
 						</div>
@@ -35,13 +37,13 @@ const Categories = () => {
 				<div className="col">
 					<div className="tp-product-category-item text-center mb-40">
 						<div className="tp-product-category-thumb fix">
-							<a href="shop-category.html">
+							<Link to="/shop">
 								<img src="assets/img/product/category/product-cat-3.png" alt="product-category" />
-							</a>
+							</Link>
 						</div>
 						<div className="tp-product-category-content">
 							<h3 className="tp-product-category-title">
-								<a href="shop-category.html">CPU Heat Pipes</a>
+								<a to="/shop">CPU Heat Pipes</a>
 							</h3>
 							<p>57 Product</p>
 						</div>
@@ -50,13 +52,13 @@ const Categories = () => {
 				<div className="col">
 					<div className="tp-product-category-item text-center mb-40">
 						<div className="tp-product-category-thumb fix">
-							<a href="shop-category.html">
+							<Link to="/shop">
 								<img src="assets/img/product/category/product-cat-4.png" alt="product-category" />
-							</a>
+							</Link>
 						</div>
 						<div className="tp-product-category-content">
 							<h3 className="tp-product-category-title">
-								<a href="shop-category.html">Smart Watch</a>
+								<a to="/shop">Smart Watch</a>
 							</h3>
 							<p>44 Product</p>
 						</div>
@@ -65,13 +67,13 @@ const Categories = () => {
 				<div className="col">
 					<div className="tp-product-category-item text-center mb-40">
 						<div className="tp-product-category-thumb fix">
-							<a href="shop-category.html">
+							<Link to="/shop">
 								<img src="assets/img/product/category/product-cat-5.png" alt="product-category" />
-							</a>
+							</Link>
 						</div>
 						<div className="tp-product-category-content">
 							<h3 className="tp-product-category-title">
-								<a href="shop-category.html">With Bluetooth </a>
+								<Link to="/shop">With Bluetooth </Link>
 							</h3>
 							<p>81 Product</p>
 						</div>

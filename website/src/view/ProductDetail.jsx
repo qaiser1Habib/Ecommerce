@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { fetchProductByIdAsync } from "../actions/productSlice";
 import { selectProductDetail } from "../store/redux/products";
 import { useToast } from "../store/hooks/useToast";
@@ -8,35 +8,24 @@ import { addToCartAsync } from "../actions/cart";
 import { selectItems } from "../store/redux/cart";
 import { userLoggedIn } from "../store/redux/auth";
 import ProductDetailSlider from "../styles/slider/ProductDetailSlider";
+import { decreaseQuantity, increaseQuantity } from "../utils/constants";
 
 const ProductDetail = () => {
 	const dispatch = useDispatch();
 	const product = useSelector(selectProductDetail) || {};
-	const params = useParams();
+	const location = useLocation();
 	const { notify } = useToast();
 	const [quantity, setQuantity] = useState(1);
 	const items = useSelector(selectItems);
 	const loggedIn = useSelector(userLoggedIn || false);
-
 	const rating = product.rating;
+	const searchProduct = location?.state?.product;
 
 	const stars = Array.from({ length: 5 }, (_, index) => {
 		if (index < Math.ceil(rating)) {
 			return <i key={index} className="fa-solid fa-star" style={{ color: "#FFB21D" }} />;
 		}
 	});
-
-	const increaseQuantity = () => {
-		if (loggedIn) {
-			setQuantity(quantity + 1);
-		}
-	};
-
-	const decreaseQuantity = () => {
-		if (quantity > 0 && loggedIn) {
-			setQuantity(quantity - 1);
-		}
-	};
 
 	const handleCart = () => {
 		if (items.findIndex((item) => item.product.id === product.id) < 0) {
@@ -51,12 +40,10 @@ const ProductDetail = () => {
 	};
 
 	useEffect(() => {
-		if (params?.id) {
-			dispatch(fetchProductByIdAsync({ formData: { id: params.id }, notify }));
+		if (searchProduct) {
+			dispatch(fetchProductByIdAsync({ formData: { id: searchProduct }, notify }));
 		}
-	}, [dispatch, params.id]);
-
-	console.log(product);
+	}, [dispatch, searchProduct]);
 
 	return (
 		<section className="tp-product-details-area">
@@ -78,9 +65,7 @@ const ProductDetail = () => {
 										</div>
 										<div className="tp-product-details-rating-wrapper d-flex align-items-center mb-10">
 											<div className="tp-product-details-rating">{stars}</div>
-											<div className="tp-product-details-reviews">
-												<span>{rating}</span>
-											</div>
+											<div className="tp-product-details-reviews">{rating !== 0 && <span>{rating}</span>}</div>
 										</div>
 									</div>
 									<p>{product.description}</p>
@@ -97,11 +82,19 @@ const ProductDetail = () => {
 										<div className="tp-product-details-action-item-wrapper d-flex align-items-center">
 											<div className="tp-product-details-quantity">
 												<div className="tp-product-quantity mb-15 mr-15">
-													<a type="button" className="tp-cart-minus" onClick={decreaseQuantity}>
+													<a
+														type="button"
+														className="tp-cart-minus"
+														onClick={() => decreaseQuantity(quantity, setQuantity, loggedIn)}
+													>
 														<i className="fa fa-minus" aria-hidden="true"></i>
 													</a>
 													<input className="tp-cart-input" type="text" value={quantity} readOnly />
-													<a type="button" className="tp-cart-plus" onClick={increaseQuantity}>
+													<a
+														type="button"
+														className="tp-cart-plus"
+														onClick={() => increaseQuantity(quantity, setQuantity, loggedIn)}
+													>
 														<i className="fa fa-plus" aria-hidden="true"></i>
 													</a>
 												</div>

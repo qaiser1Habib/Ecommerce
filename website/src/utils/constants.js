@@ -1,4 +1,3 @@
-
 export const IS_USER_LOGGED_IN = "IS_USER_LOGGED_IN";
 export const LOGOUT_USER = "LOGOUT_USER";
 
@@ -24,3 +23,15 @@ export const ITEMS_PER_PAGE = 12;
 export function discountedPrice(item) {
 	return Math.round(item?.price * (1 - item?.discountPercentage / 100), 2);
 }
+
+export const increaseQuantity = (quantity, setQuantity, loggedInUser) => {
+	if (loggedInUser) {
+		setQuantity(quantity + 1);
+	}
+};
+
+export const decreaseQuantity = (quantity, setQuantity, loggedInUser) => {
+	if (quantity > 0 && loggedInUser) {
+		setQuantity(quantity - 1);
+	}
+};

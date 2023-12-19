@@ -46,22 +46,24 @@ const Cart = () => {
 										</tr>
 									</thead>
 									<tbody>
-										{items !== null &&
+										{items.length ? (
 											items.map((item, index) => (
 												<tr key={index}>
 													<td className="tp-cart-img">
-														<Link to={`/product-detail/${item.product?.id}`}>
+														<Link to="/product-detail" state={{ product: item.product.id }}>
 															<img
 																src={`${import.meta.env.VITE_APP_API_URL}/products/media?filename=${
-																	item?.product.media[0].filename
-																}&mimetype=${item?.product.media[0].mimetype}&width=500`}
+																	item?.product?.media[0].filename
+																}&mimetype=${item?.product?.media[0].mimetype}&width=500`}
 																alt="product-image"
 															/>
 														</Link>
 													</td>
 
 													<td className="tp-cart-title">
-														<Link to={`/product-detail/${item.product?.id}`}>{item.product?.title}</Link>
+														<Link to="/product-detail" state={{ product: item.product.id }}>
+															{item.product?.title}
+														</Link>
 													</td>
 
 													<td className="tp-cart-price">
@@ -142,7 +144,17 @@ const Cart = () => {
 														</div>
 													</td>
 												</tr>
-											))}
+											))
+										) : (
+											<tr>
+												<td className="text-center">
+													<Link to="/shop" className="text-primary">
+														Add Product
+													</Link>{" "}
+													to cart
+												</td>
+											</tr>
+										)}
 									</tbody>
 								</table>
 							</div>
