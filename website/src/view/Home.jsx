@@ -23,6 +23,8 @@ const Home = () => {
 		dispatch(fetchAllProductsAsync({ formData: { page: page, limit: limit }, notify }));
 	}, [dispatch, page]);
 
+	
+
 	return (
 		<>
 			<section className="tp-slider-area p-relative z-index-1">
@@ -36,13 +38,15 @@ const Home = () => {
 			<section className="tp-product-area pb-55">
 				<div className="container">
 					<Products products={products} />
-					<Pagination
-						totalItems={totalItems}
-						limit={limit}
-						page={page}
-						setPage={setPage}
-						handlePage={handlePage}
-					></Pagination>
+					{products.length > 0 && (
+						<Pagination
+							totalItems={totalItems}
+							limit={limit}
+							page={page}
+							setPage={setPage}
+							handlePage={handlePage}
+						></Pagination>
+					)}
 				</div>
 			</section>
 		</>

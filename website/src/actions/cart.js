@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as api from "../middlewares/apis";
 import { apiErrorHandler } from "./apiErrorHandler";
 
-export const addToCartAsync = createAsyncThunk("cart/addToCartAsync", async ({ formData, notify }, { dispatch }) => {
+export const addToCartAsync = createAsyncThunk("cart/addToCart", async ({ formData, notify }, { dispatch }) => {
 	try {
 		const { payload } = await api.addToCart(formData);
 		if (payload) {

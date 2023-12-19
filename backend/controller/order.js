@@ -42,7 +42,6 @@ const fetchAllOrders = async (request, response) => {
 
 		return sendJsonResponse(response, HTTP_STATUS_CODES.OK, true, "Records Found!", docs, totalDocs);
 	} catch (error) {
-		console.error("Error:", error);
 		return sendJsonResponse(response, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR, false, "Error occurred!", {
 			error: error.message || error,
 		});

@@ -9,18 +9,23 @@ import { useEffect, lazy, Suspense, useState } from "react";
 import { useToast } from "./store/hooks/useToast";
 import { loginUserAsync } from "./actions/user";
 import { verifyUserLogin } from "./actions/auth";
+import { fetchWishlistByUserAsync } from "./actions/wishlist";
 
 const LazyComponents = {
 	Home: lazy(() => import("./view/Home")),
 	Shop: lazy(() => import("./view/Shop")),
+	SearchResult: lazy(() => import("./view/SearchResult")),
+	Contact: lazy(() => import("./view/Contact")),
 	Register: lazy(() => import("./view/component/auth/Register")),
 	Login: lazy(() => import("./view/component/auth/Login")),
 	ForgotPassword: lazy(() => import("./view/component/auth/ForgotPassword")),
 	ProductDetail: lazy(() => import("./view/ProductDetail")),
 	Cart: lazy(() => import("./view/Cart")),
+	Wishlist: lazy(() => import("./view/Wishlist")),
 	UserDashboard: lazy(() => import("./view/UserDashboard")),
 	Checkout: lazy(() => import("./view/Checkout")),
 	OrderSuccess: lazy(() => import("./view/OrderSuccess")),
+	StripeCheckout: lazy(() => import("./view/StripeCheckout")),
 	ErrorPage: lazy(() => import("./view/ErrorPage")),
 	Logout: lazy(() => import("./view/component/auth/Logout")),
 };
@@ -67,6 +72,7 @@ function App() {
 			if (loggedIn) dispatch(loginUserAsync(notify));
 		});
 		dispatch(fetchCartByUserAsync(notify));
+		dispatch(fetchWishlistByUserAsync(notify));
 	}, [loggedIn]);
 
 	return (
@@ -78,7 +84,9 @@ function App() {
 				<Routes>
 					<Route path="/" element={<LazyComponents.Home />} />
 					<Route path="/shop" element={<LazyComponents.Shop />} />
-					<Route path="/product-detail/:id" element={<LazyComponents.ProductDetail />} />
+					<Route path="/search" element={<LazyComponents.SearchResult />} />
+					<Route path="/contact" element={<LazyComponents.Contact />} />
+					<Route path="/product-detail" element={<LazyComponents.ProductDetail />} />
 					<Route path="/logout" element={<LazyComponents.Logout />} />
 
 					{/* Guest routes for users not logged in */}
@@ -93,7 +101,9 @@ function App() {
 						<Route path="/order-success" element={<LazyComponents.OrderSuccess />} />
 						<Route path="/user" element={<LazyComponents.UserDashboard />} />
 						<Route path="/checkout" element={<LazyComponents.Checkout />} />
+						<Route path="/stripe-checkout" element={<LazyComponents.StripeCheckout />} />
 						<Route path="/Cart" element={<LazyComponents.Cart />} />
+						<Route path="/wishlist" element={<LazyComponents.Wishlist />} />
 					</Route>
 
 					<Route path="*" element={<LazyComponents.ErrorPage />} />

@@ -1,13 +1,46 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
 import { selectItems } from "../../store/redux/cart";
 import { selectUserInfo } from "../../store/redux/user";
 import { userLoggedIn } from "../../store/redux/auth";
+import { selectCategories } from "../../store/redux/categories";
+import { useEffect, useState } from "react";
+import { getCategoriesAsync } from "../../actions/categories";
+import { useToast } from "../../store/hooks/useToast";
+import { selectWishlist } from "../../store/redux/wishlist";
 
 const Header = () => {
+	const { notify } = useToast();
 	const user = useSelector(selectUserInfo);
+	const wishlist = useSelector(selectWishlist);
+
 	const cartItems = useSelector(selectItems);
 	const loggedIn = useSelector(userLoggedIn || false);
+	const dispatch = useDispatch();
+	const categories = useSelector(selectCategories);
+	const [searchFormData, setSearchFormData] = useState({
+		search: "",
+		category: "",
+	});
+	useEffect(() => {
+		dispatch(getCategoriesAsync(notify));
+	}, [dispatch]);
+
+	const handleFormDataInput = (e) => {
+		const { name, value } = e.target;
+		setSearchFormData((prevData) => ({
+			...prevData,
+			[name]: value,
+		}));
+	};
+
+	const handleSearch = (e, selectedCategory) => {
+		e.preventDefault();
+		setSearchFormData((prevData) => ({
+			...prevData,
+			category: selectedCategory,
+		}));
+	};
 
 	return (
 		<>
@@ -25,41 +58,46 @@ const Header = () => {
 								</div>
 								<div className="col-xl-6 col-lg-7 d-none d-lg-block">
 									<div className="tp-header-search pl-70">
-										<form action="#">
-											<div className="tp-header-search-wrapper d-flex align-items-center">
-												<div className="tp-header-search-box">
-													<input type="text" placeholder="Search for Products..." />
+										<div className="tp-header-search-wrapper d-flex align-items-center">
+											<div className="tp-header-search-box">
+												<input
+													type="text"
+													name="search"
+													value={searchFormData?.search || ""}
+													onChange={(e) => handleFormDataInput(e)}
+													placeholder="Search for Products..."
+												/>
+											</div>
+											<div className="tp-header-search-category">
+												<div className="nice-select" tabIndex={0}>
+													<span className="current">Select Category</span>
+
+													<ul className="list">
+														<li data-value="Select Category" className="option selected">
+															Select Category
+														</li>
+														{categories.map((category, index) => (
+															<li onClick={(e) => handleSearch(e, category.label)} key={index} className="option">
+																{category.label}
+															</li>
+														))}
+													</ul>
 												</div>
-												<div className="tp-header-search-category">
-													<div className="nice-select" tabIndex={0}>
-														<span className="current">Select Category</span>
-														<ul className="list">
-															<li data-value="Select Category" className="option selected">
-																Select Category
-															</li>
-															<li data-value="Mobile" className="option">
-																Mobile
-															</li>
-															<li data-value="Digital Watch" className="option">
-																Digital Watch
-															</li>
-															<li data-value="Computer" className="option">
-																Computer
-															</li>
-															<li data-value="Watch" className="option">
-																Watch
-															</li>
-														</ul>
-													</div>
-												</div>
-												<div className="tp-header-search-btn">
-													<button type="submit">
+											</div>
+											<div className="tp-header-search-btn">
+												<button style={{ background: searchFormData.search !== "" ? "#0989ff" : "#4daaff" }}>
+													<Link
+														to={searchFormData.search !== "" && "/search"}
+														state={{ search: searchFormData }}
+														replace={true}
+													>
 														<svg
 															width={20}
 															height={20}
 															viewBox="0 0 20 20"
 															fill="none"
 															xmlns="http://www.w3.org/2000/svg"
+															style={{ opacity: searchFormData.search !== "" ? "1" : ".6" }}
 														>
 															<path
 																d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z"
@@ -76,10 +114,10 @@ const Header = () => {
 																strokeLinejoin="round"
 															/>
 														</svg>
-													</button>
-												</div>
+													</Link>
+												</button>
 											</div>
-										</form>
+										</div>
 									</div>
 								</div>
 								<div className="col-xl-4 col-lg-3 col-md-8 col-6">
@@ -96,7 +134,7 @@ const Header = () => {
 																src={`${import.meta.env.VITE_APP_API_URL}/user/image?filename=${
 																	user?.profileImage
 																}&width=500`}
-																style={{ borderRadius: "50%", objectFit:"cover" }}
+																style={{ borderRadius: "50%", objectFit: "cover" }}
 															/>
 														</span>
 													) : (
@@ -118,7 +156,7 @@ const Header = () => {
 											{loggedIn && (
 												<>
 													<div className="tp-header-action-item d-none d-lg-block">
-														<Link to="" className="tp-header-action-btn">
+														<Link to="/wishlist" className="tp-header-action-btn">
 															<svg
 																width={22}
 																height={20}
@@ -143,7 +181,9 @@ const Header = () => {
 																	strokeLinejoin="round"
 																/>
 															</svg>
-															<span className="tp-header-action-badge">4</span>
+															{wishlist.length > 0 && (
+																<span className="tp-header-action-badge">{wishlist?.length || "0"}</span>
+															)}
 														</Link>
 													</div>
 													<div className="tp-header-action-item">
@@ -247,6 +287,11 @@ const Header = () => {
 																	<li className="nav-item">
 																		<NavLink className="nav-link">About</NavLink>
 																	</li>
+																	<li className="nav-item">
+																		<NavLink to="/contact" className="nav-link">
+																			Contact
+																		</NavLink>
+																	</li>
 																</ul>
 															</div>
 														</div>
@@ -305,6 +350,11 @@ const Header = () => {
 													</li>
 													<li>
 														<NavLink to="/">About</NavLink>
+													</li>
+													<li>
+														<NavLink to="/contact" className="nav-link">
+															Contact
+														</NavLink>
 													</li>
 												</ul>
 											</nav>

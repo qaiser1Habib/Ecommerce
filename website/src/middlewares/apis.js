@@ -46,15 +46,20 @@ const apiMethods = {
 };
 
 export const fetchAllProducts = (formData) => apiMethods.get("/products", formData);
+export const getCategories = () => apiMethods.get("/category");
+export const getBrands = () => apiMethods.get("/brand");
 export const fetchProductById = (formData) => apiMethods.get("/products", formData);
 export const fetchCartByUser = (formData) => apiMethods.get("/cart", formData);
+export const fetchWishlistByUser = (formData) => apiMethods.get("/wishlist", formData);
 
 export const registerUser = (formData) => apiMethods.post("/user/signup", formData);
 export const loginUser = (formData) => apiMethods.post("/user", formData);
 export const getLoginUser = (formData) => apiMethods.get("/user", formData);
 export const updateUser = (formData) => apiMethods.patch("/user", formData, true);
 export const addToCart = (formData) => apiMethods.post("/cart", formData);
+export const addToWishList = (formData) => apiMethods.post("/wishlist", formData);
 export const removeFromCart = (formData) => apiMethods.delete("/cart", formData);
+export const removeFromWishlist = (formData) => apiMethods.delete("/wishlist", formData);
 export const updateCartItem = (formData) => apiMethods.patch("/cart", formData);
 
 export const createOrder = (formData) => apiMethods.post("/order", formData);

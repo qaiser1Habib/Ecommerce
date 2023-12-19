@@ -25,7 +25,6 @@ const addToCart = async (request, response) => {
 
 fetchCartByUser = async (request, response) => {
 	try {
-		console.log(request.jwtPayload);
 		const { userID } = request?.jwtPayload;
 		if (!userID) {
 			return sendJsonResponse(response, HTTP_STATUS_CODES.BAD_REQUEST, false, "Missing parameters!", null);

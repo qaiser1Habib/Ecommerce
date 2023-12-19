@@ -2,7 +2,7 @@ import axios from "axios";
 import { HTTP_STATUS_CODES } from "../utils/constants";
 
 const instance = axios.create({
-	baseURL: "http://localhost:3000",
+	baseURL: import.meta.env.VITE_APP_API_URL,
 	timeout: 300000,
 });
 

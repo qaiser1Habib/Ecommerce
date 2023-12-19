@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { fetchProductByIdAsync } from "../actions/productSlice";
 import { selectProductDetail } from "../store/redux/products";
 import { useToast } from "../store/hooks/useToast";
@@ -8,18 +8,18 @@ import { addToCartAsync } from "../actions/cart";
 import { selectItems } from "../store/redux/cart";
 import { userLoggedIn } from "../store/redux/auth";
 import ProductDetailSlider from "../styles/slider/ProductDetailSlider";
+import { decreaseQuantity, increaseQuantity } from "../utils/constants";
 
 const ProductDetail = () => {
 	const dispatch = useDispatch();
 	const product = useSelector(selectProductDetail) || {};
-	const params = useParams();
+	const location = useLocation();
 	const { notify } = useToast();
 	const [quantity, setQuantity] = useState(1);
 	const items = useSelector(selectItems);
 	const loggedIn = useSelector(userLoggedIn || false);
-
-	const productImages = product?.images || [];
 	const rating = product.rating;
+	const searchProduct = location?.state?.product;
 
 	const stars = Array.from({ length: 5 }, (_, index) => {
 		if (index < Math.ceil(rating)) {
@@ -27,21 +27,7 @@ const ProductDetail = () => {
 		}
 	});
 
-	const increaseQuantity = () => {
-		if (loggedIn) {
-			setQuantity(quantity + 1);
-		}
-	};
-
-	const decreaseQuantity = () => {
-		if (quantity > 0 && loggedIn) {
-			setQuantity(quantity - 1);
-		}
-	};
-
 	const handleCart = () => {
-		// const findItem = ;
-
 		if (items.findIndex((item) => item.product.id === product.id) < 0) {
 			dispatch(addToCartAsync({ formData: { product: product.id, quantity: quantity }, notify }));
 		} else {
@@ -54,67 +40,18 @@ const ProductDetail = () => {
 	};
 
 	useEffect(() => {
-		if (params?.id) {
-			dispatch(fetchProductByIdAsync({ formData: { id: params.id }, notify }));
+		if (searchProduct) {
+			dispatch(fetchProductByIdAsync({ formData: { id: searchProduct }, notify }));
 		}
-	}, [dispatch, params.id]);
+	}, [dispatch, searchProduct]);
 
 	return (
 		<section className="tp-product-details-area">
-			<div className="tp-product-details-top pb-115">
+			<div className="tp-product-details-top pt-70 pb-115">
 				<div className="container">
-					<div className="row justify-content-center  mt-5">
+					<div className="row justify-content-center">
 						<div className="row">
-							<div className="col-xl-7 col-lg-6">
-								{/* <div className="tp-product-details-thumb-wrapper tp-tab d-sm-flex border">
-									<nav>
-										{productImages.map((item, index) => (
-											<div
-												key={index}
-												className="nav nav-tabs flex-sm-column mb-2"
-												id="productDetailsNavThumb"
-												role="tablist"
-											>
-												<button
-													className="nav-link"
-													id={`nav-${index + 1}-tab`}
-													data-bs-toggle="tab"
-													data-bs-target={`#nav-${index + 1}`}
-													type="button"
-													role="tab"
-													aria-controls={`nav-${index + 1}`}
-													aria-selected={false}
-												>
-													<img src={item} className="img-fluid" alt="" />
-												</button>
-											</div>
-										))}
-									</nav>
-									<div
-										className="tab-content m-img w-100 border text-center"
-										id="productDetailsNavContent"
-										style={{ background: "#F3F5F6", minHeight: "600px" }}
-									>
-										{productImages.map((item, index) => {
-											return (
-												<div
-													key={index}
-													className={`tab-pane fade pt-5 w-100 ${index === 0 ? "active show" : ""}`}
-													id={`nav-${index + 1}`}
-													role="tabpanel"
-													aria-labelledby={`nav-${index + 1}-tab`}
-													tabIndex={index === 0 ? 0 : -1}
-												>
-													<div className="tp-product-details-nav-main-thumb">
-														<img src={item} className="w-100 h-100" style={{ objectFit: "contain" }} alt="" />
-													</div>
-												</div>
-											);
-										})}
-									</div>
-								</div> */}
-								<ProductDetailSlider images={productImages} />
-							</div>
+							<div className="col-xl-7 col-lg-6">{product?.media && <ProductDetailSlider images={product?.media} />}</div>
 							<div className="col-xl-5 col-lg-6">
 								<div className="tp-product-details-wrapper">
 									<div className="tp-product-details-category">
@@ -128,9 +65,7 @@ const ProductDetail = () => {
 										</div>
 										<div className="tp-product-details-rating-wrapper d-flex align-items-center mb-10">
 											<div className="tp-product-details-rating">{stars}</div>
-											<div className="tp-product-details-reviews">
-												<span>{rating}</span>
-											</div>
+											<div className="tp-product-details-reviews">{rating !== 0 && <span>{rating}</span>}</div>
 										</div>
 									</div>
 									<p>{product.description}</p>
@@ -147,11 +82,19 @@ const ProductDetail = () => {
 										<div className="tp-product-details-action-item-wrapper d-flex align-items-center">
 											<div className="tp-product-details-quantity">
 												<div className="tp-product-quantity mb-15 mr-15">
-													<a type="button" className="tp-cart-minus" onClick={decreaseQuantity}>
+													<a
+														type="button"
+														className="tp-cart-minus"
+														onClick={() => decreaseQuantity(quantity, setQuantity, loggedIn)}
+													>
 														<i className="fa fa-minus" aria-hidden="true"></i>
 													</a>
 													<input className="tp-cart-input" type="text" value={quantity} readOnly />
-													<a type="button" className="tp-cart-plus" onClick={increaseQuantity}>
+													<a
+														type="button"
+														className="tp-cart-plus"
+														onClick={() => increaseQuantity(quantity, setQuantity, loggedIn)}
+													>
 														<i className="fa fa-plus" aria-hidden="true"></i>
 													</a>
 												</div>

@@ -6,7 +6,7 @@ const router = express.Router();
 router
 	.post("/", jwtAuthentication, addToCart)
 	.get("/", jwtAuthentication, fetchCartByUser)
-	.delete("/", removeFromCart)
+	.delete("/", jwtAuthentication, removeFromCart)
 	.patch("/", jwtAuthentication, updateCartItem);
 
 exports.router = router;

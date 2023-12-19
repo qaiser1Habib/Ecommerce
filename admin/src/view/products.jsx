@@ -1,26 +1,24 @@
 import { useState } from "react";
 import BreadCrumb from "./partials/breadCrumb";
 import DeleteModal from "../styles/modals/deleteModal";
+import ProgressModal from "../styles/modals/ProgressModal.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "../store/hook/useToast";
 
 import { useForm } from "react-hook-form";
 
 import Modal from "react-bootstrap/Modal";
-import { InputSwitch } from "primereact/inputswitch";
-import { Link } from "react-router-dom";
 import { selectAllProducts, selectTotalItems } from "../store/redux/product";
 import { createProductAsync, deleteProductAsync, fetchAllProductsAsync, updateProductAsync } from "../actions/productSlice";
 import { useEffect } from "react";
-import { discountedPrice } from "../utils/constants";
+import { ALLOWED_MEDIA_TYPES } from "../utils/constants";
+import ProductCard from "../styles/cards/ProductCard.jsx";
 
 const User = () => {
 	const dispatch = useDispatch();
 	const { notify } = useToast();
 
-	const [pickedFileName, setPickedFileName] = useState("");
-	const [checked, setChecked] = useState(false);
-	// const [formData, setFormData] = useState();
+	const [formData, setFormData] = useState();
 	const [brandList, setBrandList] = useState(null);
 	const [categoryList, setCategoryList] = useState(null);
 	const [showAddModal, setShowAddModal] = useState(false);
@@ -30,6 +28,22 @@ const User = () => {
 	const [page, setPage] = useState(1);
 	const products = useSelector(selectAllProducts);
 	const totalItems = useSelector(selectTotalItems);
+	const [showUploadProgressModal, setShowUploadProgressModal] = useState(false);
+	const [processingStatus, setProcessingStatus] = useState(null);
+
+	const handleUploadMedia = (e) => {
+		let media = [];
+		for (let file of e.target.files) media.push({ filename: file, mimetype: file.type });
+
+		if (media?.length > 4) {
+			alert("You can only select upto 3 images for each product");
+		} else {
+			setFormData({
+				...formData,
+				media: media,
+			});
+		}
+	};
 
 	const limit = 12;
 
@@ -82,22 +96,6 @@ const User = () => {
 		setCategoryList(mappedCategory);
 	}, []);
 
-	const handleFileChange = (e) => {
-		const fileInput = e.target;
-		if (fileInput.files.length > 0) {
-			const fileName = fileInput.files[0].name;
-			setPickedFileName(fileName);
-		} else {
-			setPickedFileName("");
-		}
-	};
-
-	const handleRemove = () => {
-		const fileInput = document.getElementById("filePicker");
-		fileInput.value = null;
-		setPickedFileName("");
-	};
-
 	const {
 		register,
 		handleSubmit,
@@ -142,27 +140,46 @@ const User = () => {
 		);
 	};
 
-	const handleFormSubmit = (data) => {
+	const handleFormSubmit = async (data) => {
+		setShowUploadProgressModal(true);
 		const product = { ...data };
-		product.images = [product?.image1, product?.image2, product?.image3, product?.thumbnail];
-		delete product["image1"];
-		delete product["image3"];
-		delete product["image2"];
 		if (isUpdatingRecord) {
 			product.id = selectedProduct.id;
 		}
-		isUpdatingRecord
-			? dispatch(updateProductAsync({ formData: { ...product }, notify })).then(
-					({ payload }) => payload?.id && setShowAddModal(false)
-			  )
-			: dispatch(createProductAsync({ formData: { ...product }, notify })).then(
-					({ payload }) => payload?.id && setShowAddModal(false)
-			  );
+		if (isUpdatingRecord) {
+			await dispatch(
+				updateProductAsync({
+					formData: { ...product, ...formData },
+					notify,
+					uploadProgress: (progressEvent) => {
+						const percentCompleted = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+						setProcessingStatus(percentCompleted);
+					},
+				})
+			).then(({ payload }) => payload?.id && setShowAddModal(false));
+		} else {
+			await dispatch(
+				createProductAsync({
+					formData: { ...product, ...formData },
+					notify,
+					uploadProgress: (progressEvent) => {
+						const percentCompleted = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+						setProcessingStatus(percentCompleted);
+					},
+				})
+			).then(({ payload }) => payload?.id && setShowAddModal(false));
+		}
 		reset();
+		setShowUploadProgressModal(false);
+		setProcessingStatus(null);
 	};
 	const handleLoadMore = () => {
 		setPage((prevPage) => prevPage + 1);
 		dispatch(fetchAllProductsAsync({ formData: { page: page + 1, limit: limit }, notify }));
+	};
+
+	const handleCancelButton = () => {
+		window.location.reload();
 	};
 
 	return (
@@ -217,45 +234,11 @@ const User = () => {
 						<div className="row">
 							{products.map((product, index) => (
 								<div key={index} className="col-12 col-sm-6 col-lg-4 col-xl-3 d-flex ">
-									<div className="card shadow-sm mb-6 mb-xl-9 d-flex flex-column w-100">
-										<div className="card-body py-3 px-3 card-scroll">
-											<div className="text-center mb-2">
-												<img
-													className="w-100 img-fluid h-300px rounded"
-													alt=""
-													loading="lazy"
-													src={product?.thumbnail}
-													style={{ objectFit: "cover" }}
-												/>
-											</div>
-										</div>
-
-										<div className="card-body p-1 px-4 card-scroll">
-											<div className="banner banner-light fs-2">
-												<Link to="/" className="text-dark fw-bold ">
-													{product?.title}
-												</Link>
-											</div>
-											<div className="fs-6 fw-bold text-gray-600 mb-2">${discountedPrice(product)}</div>
-											<p style={{ textDecoration: "line-through" }}>${product?.price}</p>
-											{product.deleted && <p className="text-danger">Product Deleted</p>}
-										</div>
-
-										<div className="card-footer p-1 px-4 flex w-100 text-start mt-auto">
-											<i
-												className="fas fa-edit svg-icon svg-icon-5 svg-icon-gray-500 p-2 pe-5 pb-3 pt-3 cursor-pointer"
-												onClick={() => handleEditItemButton(product)}
-											/>
-											<i
-												className="bi bi-trash-fill svg-icon svg-icon-5 svg-icon-gray-500 pb-3 pt-3 cursor-pointer"
-												onClick={() => handleDeleteItemButton(product)}
-											/>
-
-											<div className="float-end">
-												<InputSwitch checked={checked} onChange={(e) => setChecked(e.value)} />
-											</div>
-										</div>
-									</div>
+									<ProductCard
+										product={product}
+										handleEditItemButton={handleEditItemButton}
+										handleDeleteItemButton={handleDeleteItemButton}
+									/>
 								</div>
 							))}
 						</div>
@@ -286,34 +269,6 @@ const User = () => {
 					<form noValidate onSubmit={handleSubmit(handleFormSubmit)}>
 						<Modal.Body>
 							<>
-								<div className="fv-row mb-7">
-									<div className="file-upload">
-										<div className="dashed-border">
-											<i className="fa fa-file file-icon"></i>
-											<div className="upload-section">
-												<p className="upload">
-													<label className="fw-bolder" htmlFor="filePicker">
-														Browse
-													</label>
-													To Upload File
-												</p>
-												<input id="filePicker" type="file" name="file" onChange={handleFileChange} />
-												{pickedFileName && (
-													<div className="w-100 text-center my-3" id="picked-file">
-														{pickedFileName}
-													</div>
-												)}
-												{pickedFileName && (
-													<div className="text-center">
-														<button id="removeBtn" className="btn btn-primary " onClick={handleRemove}>
-															Remove File
-														</button>
-													</div>
-												)}
-											</div>
-										</div>
-									</div>
-								</div>
 								<div className="row scroll-y me-n7 pe-7">
 									<div className="col-md-12 mb-7">
 										<label className="required fw-bold fs-6 mb-2">Title</label>
@@ -333,6 +288,17 @@ const User = () => {
 											{...register("description", {
 												required: "description is required",
 											})}
+										/>
+									</div>
+									<div className="fv-row mb-7">
+										<label className="required fw-bold fs-6 mb-2">Upload Product</label>
+										<input
+											type="file"
+											className="form-control form-control-solid mb-3 mb-lg-0"
+											placeholder="Product Title"
+											multiple
+											accept={ALLOWED_MEDIA_TYPES}
+											onChange={handleUploadMedia}
 										/>
 									</div>
 									<div className="col-md-6 mb-7">
@@ -405,50 +371,6 @@ const User = () => {
 											))}
 										</select>
 									</div>
-									<div className="col-md-6 mb-7">
-										<label className="required fw-bold fs-6 mb-2">Thumbnail</label>
-										<input
-											type="text"
-											className="form-control form-control-solid mb-3 mb-lg-0"
-											placeholder="Thumbnail"
-											{...register("thumbnail", {
-												required: "thumbnail is required",
-											})}
-										/>
-									</div>
-									<div className="col-md-6 mb-7">
-										<label className="required fw-bold fs-6 mb-2">Image 1</label>
-										<input
-											type="text"
-											className="form-control form-control-solid mb-3 mb-lg-0"
-											placeholder="image 1"
-											{...register("image1", {
-												required: "image is required",
-											})}
-										/>
-									</div>
-									<div className="col-md-6 mb-7">
-										<label className="required fw-bold fs-6 mb-2">Image 2</label>
-										<input
-											type="text"
-											className="form-control form-control-solid mb-3 mb-lg-0"
-											placeholder="Image 2"
-											{...register("image2", {
-												required: "Image is required",
-											})}
-										/>
-									</div>
-									<div className="col-md-6 mb-7">
-										<label className="required fw-bold fs-6 mb-2">Image 3</label>
-										<input
-											type="text"
-											className="form-control form-control-solid mb-3 mb-lg-0"
-											placeholder="Image 3"
-											{...register("image3", {
-												required: "Image is required",
-											})}
-										/>
-									</div>
 								</div>
 							</>
 						</Modal.Body>
@@ -466,6 +388,16 @@ const User = () => {
 				</Modal>
 
 				<DeleteModal handleDelete={handleDelete} showModal={showDeleteModal} setShowModal={setShowDeleteModal} />
+
+				{showUploadProgressModal && (
+					<ProgressModal
+						showModal={showUploadProgressModal}
+						setShowModal={setShowUploadProgressModal}
+						handleSubmit={handleCancelButton}
+						heading={processingStatus}
+						description="Please wait for the process to complete, do not close browser."
+					/>
+				)}
 			</div>
 		</>
 	);
