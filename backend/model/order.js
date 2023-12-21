@@ -5,7 +5,7 @@ const orderSchema = new Schema({
 	items: { type: [Schema.Types.Mixed], required: true },
 	totalPrice: { type: Number },
 	totalItems: { type: Number },
-	currentDate: { type: Date },
+	orderDate: { type: Date },
 	userID: { type: Schema.Types.ObjectId, ref: "User", required: true },
 	//TODO:  we can add enum types
 	paymentMethod: { type: String, required: true },

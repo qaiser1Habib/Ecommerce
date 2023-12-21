@@ -1,4 +1,5 @@
 import { Link, Navigate, useLocation } from "react-router-dom";
+import { add } from "date-fns";
 import { discountedPrice } from "../utils/constants";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,6 +7,7 @@ import { resetCartAsync } from "../actions/cart";
 import { userLoggedIn } from "../store/redux/auth";
 import { useToast } from "../store/hooks/useToast";
 import { resetOrder } from "../store/redux/order";
+import { convertToDate } from "../utils/helpers";
 
 const OrderSuccess = () => {
 	const dispatch = useDispatch();
@@ -17,7 +19,6 @@ const OrderSuccess = () => {
 		dispatch(resetCartAsync({ formData: {}, notify }));
 		dispatch(resetOrder());
 	}, [useEffect, user]);
-
 
 	return (
 		<>
@@ -95,13 +96,13 @@ const OrderSuccess = () => {
 													<div className="col-sm-6">
 														<div className="tp-order-details-item">
 															<h4>Order Date:</h4>
-															<p>April 10, 2023</p>
+															<p>{convertToDate(order?.orderDate, "dd-MM-yyyy")}</p>
 														</div>
 													</div>
 													<div className="col-sm-6">
 														<div className="tp-order-details-item">
 															<h4>Expected Delivery: </h4>
-															<p>April 16, 2023</p>
+															<p>{convertToDate(order?.orderDate, "dd-MM-yyyy", 5)}</p>
 														</div>
 													</div>
 													<div className="col-sm-6">

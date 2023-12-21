@@ -1,1 +1,0 @@
-import{u as o,a as r,l as n,c,r as i,j as s,N as u,O as l}from"./index-769f51e0.js";const h=()=>{const a=o(),e=r(n),{notify:t}=c();return i.useEffect(()=>{(async()=>{try{await a(l(t)),window.location.reload()}catch{t("error","Failed to sign out. Please try again.")}})()},[a,t]),s.jsx(s.Fragment,{children:!e&&s.jsx(u,{to:"/",replace:!0})})};export{h as default};
