@@ -10,6 +10,7 @@ import { createOrderAsync } from "../actions/order";
 import { selectCurrentOrder } from "../store/redux/order";
 import { Navigate } from "react-router-dom";
 import { selectUserInfo } from "../store/redux/user";
+import { convertToDate } from "../utils/helpers";
 
 const Checkout = () => {
 	const { register, handleSubmit, reset } = useForm();
@@ -26,8 +27,6 @@ const Checkout = () => {
 	const totalItems = items.reduce((total, item) => {
 		return item.quantity + total;
 	}, 0);
-	const currentDate = new Date();
-	const formattedDate = currentDate.toLocaleDateString("en-GB");
 
 	const handlePayment = (e) => {
 		console.log(e.target.value);
@@ -38,6 +37,7 @@ const Checkout = () => {
 	};
 
 	const handleOrder = () => {
+		const currentDate = convertToDate(new Date());
 		dispatch(
 			createOrderAsync({
 				formData: {
@@ -48,7 +48,7 @@ const Checkout = () => {
 					selectedAddress,
 					paymentMethod,
 					status: "pending",
-					// currentDate: formattedDate,
+					orderDate: currentDate,
 				},
 				notify,
 			})

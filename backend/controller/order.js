@@ -10,7 +10,7 @@ const createOrder = async (request, response) => {
 	const order = new Order({ ...payload });
 	try {
 		const result = await order.save();
-
+		console.log(result);
 		return sendJsonResponse(response, HTTP_STATUS_CODES.OK, true, "Order Placed::success", result);
 	} catch (error) {
 		return sendJsonResponse(response, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR, false, "Error!", {
@@ -35,6 +35,7 @@ const OrdersByUser = async (request, response) => {
 		});
 	}
 };
+
 const fetchAllOrders = async (request, response) => {
 	try {
 		const docs = await Order.find().exec();
